@@ -20,25 +20,6 @@ function OnInit()
 	SendChat("you can contact martin via the forums, or email (martindevans@gmail.com)")
 end
 
-function TestTaskOrder()
-	Multithreading.StartLongTask(function()
-		SendChat("1")
-	end)
-	Multithreading.StartLongTask(function()
-		SendChat("2")
-	end)
-	Multithreading.StartLongTask(function()
-		Multithreading.StartLongTask(function()
-			SendChat("3")
-		end)
-		Multithreading.StartLongTask(function()
-			Multithreading.StartLongTask(function()
-				SendChat("4")
-			end)
-		end)
-	end)
-end
-
 function OnTick()
 	if (DefconLevel ~= GetDefconLevel()) then
 		DefconLevel = GetDefconLevel()
@@ -54,7 +35,7 @@ function OnTick()
 			Instance.OnFirstTickDefcon1()
 		end
 	end
-	
+
 	if (DefconLevel == 5) then
 		Instance.TickDefcon5()
 	elseif (DefconLevel == 4) then
@@ -66,7 +47,7 @@ function OnTick()
 	elseif (DefconLevel == 1) then
 		Instance.TickDefcon1()
 	end
-	
+
 	Multithreading.WorkOnLongTasks()
 end
 
