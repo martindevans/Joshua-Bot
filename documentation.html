@@ -1,0 +1,1061 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>DEFCON AI Luabot Reference</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      body {
+      	color: #000000 ;
+      	background-color: #FFFFFF ;
+      	font-family: sans-serif ;
+      	text-align: justify ;
+      	margin-right: 20px ;
+      	margin-left: 20px ;
+      }
+      
+      th {
+        text-align: left ;
+        padding-right: 4em ;
+      }
+      
+      .contents ul {
+        list-style-type: none ;
+        list-style-position: outside ;
+      }
+      
+      h1, h2, h3, h4 {
+        font-weight: normal ;
+        font-style: italic ;
+      }
+      
+      a:link {
+        color: #000080 ;
+        background-color: inherit ;
+        text-decoration: none ;
+      }
+      
+      a:visited {
+        background-color: inherit ;
+        text-decoration: none ;
+      }
+      
+      a:link:hover, a:visited:hover {
+        color: #000080 ;
+       	background-color: #E0E0FF ;
+      }
+      
+      a:link:active, a:visited:active {
+        color: #FF0000 ;
+      }
+      
+      hr {
+        border: 0 ;
+        height: 1px ;
+        color: #a0a0a0 ;
+        background-color: #a0a0a0 ;
+      }
+      
+      h3 code {
+        font-family: inherit ;
+      }
+      
+      pre {
+        font-size: 105% ;
+      }
+    </style>
+  </head>
+  <body>
+    <hr/>
+    <h1>DEFCON AI Luabot Reference Document</h1>
+    <p>
+    Luabot 0.3 by Peter Cawley, February 21st, 2010.<br/>
+    Lua 5.1 is copyright © 2006-2008 Lua.org, PUC-Rio. Freely available under the terms of the <a href="http://www.lua.org/license.html#5">Lua license</a>.
+    </p>
+    <hr/>
+    <h2><a name="contents">Contents</a></h2>
+    <div class="contents">
+      <ul style="padding: 0pt;">
+        <li>
+          <a href="#intro">1 - Introduction</a>
+          <ul>
+            <li>
+              <a href="#intro-why">1.1 - Why Lua?</a>
+            </li><li>
+              <a href="#intro-setup">1.2 - Installation and setup</a>
+            </li>
+          </ul>
+          <p></p>
+        </li>
+        <li>
+          <a href="#binding">2 - The Luabot binding</a>
+          <ul>
+            <li>
+              <a href="#script-expectations">2.1 - Expectations of the script</a>
+            </li><li>
+              <a href="#ids">2.2 - IDs</a>
+            </li><li>
+              <a href="#enum">2.3 - Enumerations</a>
+              <ul>
+                <li>
+                  <a href="#enum-type">2.3.1 - Unit type</a>
+                </li><li>
+                  <a href="#enum-state">2.3.2 - Unit state</a>
+                </li><li>
+                  <a href="#enum-territory">2.3.3 - Territories</a>
+                </li><li>
+                  <a href="#enum-event">2.3.4 - Event type</a>
+                </li>
+              </ul>
+            </li><li>
+              <a href="#api-differences">2.4 - Differences to the DEFCON C++ API</a>
+            </li>
+          </ul>
+          <p></p>
+        </li>
+        <li>
+          <a href="#cpp">3 - Comments on the C++ part of Luabot</a>
+          <ul>
+            <li>
+              <a href="#cpp-dllinterface">3.1 - DLLinterface.cpp</a>
+            </li><li>
+              <a href="#cpp-luabot">3.2 - LuaBot.cpp</a>
+            </li><li>
+              <a href="#cpp-templates">3.3 - BindingTemplates.h</a>
+            </li>
+          </ul>
+          <p></p>
+        </li>
+        <li>
+          <a href="#fn">4 - Function listing</a>
+          <p></p>
+        </li>
+      </ul>
+    </div>
+    <hr/>
+    <h2><a name="index">Index</a></h2>
+    <table width="100%">
+      <tr valign="top">
+        <td>
+          <h3><a name="functions-by-category">Alphabetical</a></h3>
+          <p>
+            <a href="#fn-DebugIsReplayingGame">DebugIsReplayingGame</a><br/>
+            <a href="#fn-DebugLog">DebugLog</a><br/>
+            <a href="#fn-GetActionQueue">GetActionQueue</a><br/>
+            <a href="#fn-GetAllianceID">GetAllianceID</a><br/>
+            <a href="#fn-GetAllOwnUnits">GetAllOwnUnits</a><br/>
+            <a href="#fn-GetAllTeamIDs">GetAllTeamIDs</a><br/>
+            <a href="#fn-GetAllUnits">GetAllUnits</a><br/>
+            <a href="#fn-GetBomberNukeTarget">GetBomberNukeTarget</a><br/>
+            <a href="#fn-GetCityIDs">GetCityIDs</a><br/>
+            <a href="#fn-GetCityPopulation">GetCityPopulation</a><br/>
+            <a href="#fn-GetCollateralDamage">GetCollateralDamage</a><br/>
+            <a href="#fn-GetCommandLineArguments">GetCommandLineArguments</a><br/>
+            <a href="#fn-GetCurrentState">GetCurrentState</a><br/>
+            <a href="#fn-GetCurrentState">GetCurrentTargetID</a><br/>            
+            <a href="#fn-GetDefconLevel">GetDefconLevel</a><br/>
+            <a href="#fn-GetDesiredGameSpeed">GetDesiredGameSpeed</a><br/>
+            <a href="#fn-GetDistance">GetDistance</a><br/>
+            <a href="#fn-GetEnemyKills">GetEnemyKills</a><br/>
+            <a href="#fn-GetFleetID">GetFleetID</a><br/>
+            <a href="#fn-GetFleetUnits">GetFleetUnits</a><br/>
+            <a href="#fn-GetFleetMemberOffset">GetFleetMemberOffset</a><br/>
+            <a href="#fn-GetFriendlyDeaths">GetFriendlyDeaths</a><br/>
+            <a href="#fn-GetGameSpeed">GetGameSpeed</a><br/>
+            <a href="#fn-GetGameTick">GetGameTick</a><br/>
+            <a href="#fn-GetGameTime">GetGameTime</a><br/>
+            <a href="#fn-GetLatitude">GetLatitude</a><br/>
+            <a href="#fn-GetLongitude">GetLongitude</a><br/>
+            <a href="#fn-GetMovementTargetLocation">GetMovementTargetLocation</a><br/>
+            <a href="#fn-GetNukeCount">GetNukeCount</a><br/>
+            <a href="#fn-GetOptionValue">GetOptionValue</a><br/>
+            <a href="#fn-GetOwnFleets">GetOwnFleets</a><br/>
+            <a href="#fn-GetOwnTeamID">GetOwnTeamID</a><br/>
+            <a href="#fn-GetOwnUnits">GetOwnUnits</a><br/>
+            <a href="#fn-GetRange">GetRange</a><br/>
+            <a href="#fn-GetRemainingPopulation">GetRemainingPopulation</a><br/>
+            <a href="#fn-GetRemainingUnits">GetRemainingUnits</a><br/>
+            <a href="#fn-GetSailDistance">GetSailDistance</a><br/>
+            <a href="#fn-GetStateCount">GetStateCount</a><br/>
+            <a href="#fn-GetStateTimer">GetStateTimer</a><br/>
+            <a href="#fn-GetSuccessfulCommands">GetSuccessfulCommands</a><br/>
+            <a href="#fn-GetTeamFleets">GetTeamFleets</a><br/>
+            <a href="#fn-GetTeamID">GetTeamID</a><br/>
+            <a href="#fn-GetTeamName">GetTeamName</a><br/>
+            <a href="#fn-GetTeamTerritories">GetTeamTerritories</a><br/>
+            <a href="#fn-GetTeamUnits">GetTeamUnits</a><br/>
+            <a href="#fn-GetTerritoryName">GetTerritoryName</a><br/>
+            <a href="#fn-GetTypeCreditCost">GetTypeCreditCost</a><br/>
+            <a href="#fn-GetUnitCreditsRemaining">GetUnitCreditsRemaining</a><br/>
+            <a href="#fn-GetUnitType">GetUnitType</a><br/>
+            <a href="#fn-GetVelocity">GetVelocity</a><br/>
+            <a href="#fn-GetVictoryTimer">GetVictoryTimer</a><br/>
+            <a href="#fn-IsBorder">IsBorder</a><br/>
+            <a href="#fn-IsCeaseFire">IsCeaseFire</a><br/>
+            <a href="#fn-IsLand">IsLand</a><br/>
+            <a href="#fn-IsRetaliating">IsRetaliating</a><br/>
+            <a href="#fn-IsSea">IsSea</a><br/>
+            <a href="#fn-IsSharingRadar">IsSharingRadar</a><br/>
+            <a href="#fn-IsValidPlacementLocation">IsValidPlacementLocation</a><br/>
+            <a href="#fn-IsValidTerritory">IsValidTerritory</a><br/>
+            <a href="#fn-IsVictoryTimerActive">IsVictoryTimerActive</a><br/>
+            <a href="#fn-IsVisible">IsVisible</a><br/>
+            <a href="#fn-OnEvent">OnEvent</a><br/>
+            <a href="#fn-OnInit">OnInit</a><br/>
+            <a href="#fn-OnShutdown">OnShutdown</a><br/>
+            <a href="#fn-OnTick">OnTick</a><br/>
+            <a href="#fn-PlaceFleet">PlaceFleet</a><br/>
+            <a href="#fn-PlaceStructure">PlaceStructure</a><br/>
+            <a href="#fn-RequestAlliance">RequestAlliance</a><br/>
+            <a href="#fn-RequestCeaseFire">RequestCeaseFire</a><br/>
+            <a href="#fn-RequestGameSpeed">RequestGameSpeed</a><br/>
+            <a href="#fn-RequestShareRadar">RequestShareRadar</a><br/>
+            <a href="#fn-SendChat">SendChat</a><br/>
+            <a href="#fn-SendVote">SendVote</a><br/>
+            <a href="#fn-SetActionTarget">SetActionTarget</a><br/>
+            <a href="#fn-SetLandingTarget">SetLandingTarget</a><br/>
+            <a href="#fn-SetMovementTarget">SetMovementTarget</a><br/>
+            <a href="#fn-SetState">SetState</a><br/>
+            <a href="#fn-WhiteboardDraw">WhiteboardDraw</a><br/>
+            <a href="#fn-WhiteboardClear">WhiteboardClear</a><br/>
+          </p>
+        </td>
+        <td>
+          <h3><a name="functions-placement">Placement functions</a></h3>
+          <p>
+            <a href="#fn-GetFleetMemberOffset">GetFleetMemberOffset</a><br/>
+            <a href="#fn-GetTypeCreditCost">GetTypeCreditCost</a><br/>
+            <a href="#fn-GetUnitCreditsRemaining">GetUnitCreditsRemaining</a><br/>
+            <a href="#fn-GetRemainingUnits">GetRemainingUnits</a><br/>
+            <a href="#fn-IsValidPlacementLocation">IsValidPlacementLocation</a><br/>
+            <a href="#fn-PlaceFleet">PlaceFleet</a><br/>
+            <a href="#fn-PlaceStructure">PlaceStructure</a><br/>
+          </p>
+          <h3><a name="functions-script-provided">Script provided functions</a></h3>
+          <p>
+            <a href="#fn-OnEvent">OnEvent</a><br/>
+            <a href="#fn-OnInit">OnInit</a><br/>
+            <a href="#fn-OnShutdown">OnShutdown</a><br/>
+            <a href="#fn-OnTick">OnTick</a><br/>
+          </p>
+          <h3><a name="functions-user-interface">User interface functions</a></h3>
+          <p>
+            <a href="#fn-RequestGameSpeed">RequestGameSpeed</a><br/>
+            <a href="#fn-SendChat">SendChat</a><br/>
+            <a href="#fn-WhiteboardDraw">WhiteboardDraw</a><br/>
+            <a href="#fn-WhiteboardClear">WhiteboardClear</a><br/>
+          </p>
+          <h3><a name="functions-world-query">World query functions</a></h3>
+          <p>
+            <a href="#fn-DebugIsReplayingGame">DebugIsReplayingGame</a><br/>
+            <a href="#fn-DebugLog">DebugLog</a><br/>
+            <a href="#fn-GetAllTeamIDs">GetAllTeamIDs</a><br/>
+            <a href="#fn-GetAllUnitData">GetAllUnitData</a><br/>
+            <a href="#fn-GetAllUnits">GetAllUnits</a><br/>
+            <a href="#fn-GetCityIDs">GetCityIDs</a><br/>
+            <a href="#fn-GetCommandLineArguments">GetCommandLineArguments</a><br/>
+            <a href="#fn-GetDefconLevel">GetDefconLevel</a><br/>
+            <a href="#fn-GetDistance">GetDistance</a><br/>
+            <a href="#fn-GetGameSpeed">GetGameSpeed</a><br/>
+            <a href="#fn-GetGameTick">GetGameTick</a><br/>
+            <a href="#fn-GetGameTime">GetGameTime</a><br/>
+            <a href="#fn-GetOptionValue">GetOptionValue</a><br/>
+            <a href="#fn-GetOwnFleets">GetOwnFleets</a><br/>
+            <a href="#fn-GetOwnTeamID">GetOwnTeamID</a><br/>
+            <a href="#fn-GetOwnUnits">GetOwnUnits</a><br/>
+            <a href="#fn-GetSailDistance">GetSailDistance</a><br/>
+            <a href="#fn-GetSuccessfulCommands">GetSuccessfulCommands</a><br/>
+            <a href="#fn-GetTerritoryName">GetTerritoryName</a><br/>
+            <a href="#fn-GetVictoryTimer">GetVictoryTimer</a><br/>
+            <a href="#fn-IsBorder">IsBorder</a><br/>
+            <a href="#fn-IsLand">IsLand</a><br/>
+            <a href="#fn-IsSea">IsSea</a><br/>
+            <a href="#fn-IsValidTerritory">IsValidTerritory</a><br/>
+            <a href="#fn-IsVictoryTimerActive">IsVictoryTimerActive</a><br/>
+          </p>
+        </td>
+        <td>
+          <h3><a name="functions-by-method">Method calls</a></h3>
+          <p>
+            <a href="#fn-RequestAlliance">allianceID:RequestAlliance</a><br/>
+          </p>
+          <p>
+            <a href="#fn-GetLatitude">eventID:GetLatitude</a><br/>
+            <a href="#fn-GetLongitude">eventID:GetLongitude</a><br/>
+            <a href="#fn-SendVote">eventID:SendVote</a><br/>
+          </p>
+          <p>
+            <a href="#fn-GetCityPopulation">cityID:GetCityPopulation</a><br/>
+            <a href="#fn-GetLatitude">cityID:GetLatitude</a><br/>
+            <a href="#fn-GetLongitude">cityID:GetLongitude</a><br/>
+            <a href="#fn-GetTeamID">cityID:GetTeamID</a><br/>
+            <a href="#fn-GetUnitType">cityID:GetUnitType</a><br/>
+          </p>
+          <p>
+            <a href="#fn-GetFleetUnits">fleetID:GetFleetUnits</a><br/>
+          </p>
+          <p>
+            <a href="#fn-GetAllianceID">teamID:GetAllianceID</a><br/>
+            <a href="#fn-GetCollateralDamage">teamID:GetCollateralDamage</a><br/>
+            <a href="#fn-GetDesiredGameSpeed">teamID:GetDesiredGameSpeed</a><br/>
+            <a href="#fn-GetEnemyKills">teamID:GetEnemyKills</a><br/>
+            <a href="#fn-GetFriendlyDeaths">teamID:GetFriendlyDeaths</a><br/>
+            <a href="#fn-GetRemainingPopulation">teamID:GetRemainingPopulation</a><br/>
+            <a href="#fn-GetTeamFleets">teamID:GetTeamFleets</a><br/>
+            <a href="#fn-GetTeamName">teamID:GetTeamName</a><br/>
+            <a href="#fn-GetTeamTerritories">teamID:GetTeamTerritories</a><br/>
+            <a href="#fn-GetTeamUnits">teamID:GetTeamUnits</a><br/>
+            <a href="#fn-IsCeaseFire">teamID:IsCeaseFire</a><br/>
+            <a href="#fn-IsSharingRadar">teamID:IsSharingRadar</a><br/>
+            <a href="#fn-RequestCeaseFire">teamID:RequestCeaseFire</a><br/>
+            <a href="#fn-RequestShareRadar">teamID:RequestShareRadar</a><br/>
+          </p>
+          <p>
+            <a href="#fn-GetActionQueue">unitID:GetActionQueue</a><br/>
+            <a href="#fn-GetBomberNukeTarget">unitID:GetBomberNukeTarget</a><br/>
+            <a href="#fn-GetCurrentState">unitID:GetCurrentState</a><br/>
+            <a href="#fn-GetCurrentTargetID">unitID:GetCurrentTargetID</a><br/>
+            <a href="#fn-GetFleetID">unitID:GetFleetID</a><br/>
+            <a href="#fn-GetLatitude">unitID:GetLatitude</a><br/>
+            <a href="#fn-GetLongitude">unitID:GetLongitude</a><br/>
+            <a href="#fn-GetMovementTargetLocation">unitID:GetMovementTargetLocation</a><br/>
+            <a href="#fn-GetNukeCount">unitID:GetNukeCount</a><br/>
+            <a href="#fn-GetStateTimer">unitID:GetStateTimer</a><br/>
+            <a href="#fn-GetStateCount">unitID:GetStateCount</a><br/>
+            <a href="#fn-GetTeamID">unitID:GetTeamID</a><br/>
+            <a href="#fn-GetUnitType">unitID:GetUnitType</a><br/>
+            <a href="#fn-GetVelocity">unitID:GetVelocity</a><br/>
+            <a href="#fn-IsRetaliating">unitID:IsRetaliating</a><br/>
+            <a href="#fn-IsVisible">unitID:IsVisible</a><br/>
+            <a href="#fn-SetActionTarget">unitID:SetActionTarget</a><br/>
+            <a href="#fn-SetLandingTarget">unitID:SetLandingTarget</a><br/>
+            <a href="#fn-SetMovementTarget">unitID:SetMovementTarget</a><br/>
+            <a href="#fn-SetState">unitID:SetState</a><br/>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <hr/>
+    <h1>1 - <a name="intro">Introduction</a></h1>
+    <p>
+      <a href="http://www.introversion.co.uk/defcon/">DEFCON</a> is a real-time strategy game developed by Introversion Software. It is inspired by the
+      global thermonuclear war of the movie <a href="http://www.imdb.com/title/tt0086567/">WarGames (1983)</a>. Luabot is an extension of the official
+      <a href="http://www.introversion.co.uk/defcon/bots/index.html">bot API</a> for DEFCON, which provides a framework for coding DEFCON "AI" bots using Lua.
+    </p>
+    <h2>1.1 - <a name="intro-why">Why Lua?</a></h2>
+    <p>
+      Lua is a powerful, fast, light-weight, embeddable scripting language. A manual for the language itself is available <a href="http://www.lua.org/manual/5.1/">online</a>,
+      and also in <a href="http://www.amazon.com/Programming-Lua-Second-Roberto-Ierusalimschy/dp/8590379825/ref=pd_bxgy_b_text_b">paper form</a>. Lua is
+      a good choice for writing DEFCON bots for several reasons:
+      <ul>
+        <li><b>No compile/link cycle:</b> Writing a bot in C++ is slowed down by having to recompile and link the program after each change, however small.
+        As a scripting language, there is no (visible) compilation or linking - the game just picks up your changes. Furthermore, this compilation and linking
+        requires that Microsoft Visual C++ 2008 (or a different compiler which conforms to the same ABI) be used, which is quite a commitment for people who
+        currently do not have it, or have problems using it (i.e. WINE users of the AI-bot version of DEFCON).</li>
+        <li><b>Speed:</b> While Lua is alot slower to execute than native C/C++, it is still one of the fastest scripting languages around. On the other hand,
+        the time taken to write a Lua program is usually shorter than the time required to write an equivalent C/C++ program, allowing for faster prototyping
+        and development iterations.</li>
+        <li><b>Coroutines:</b> Lua's <a href="http://www.lua.org/manual/5.1/manual.html#2.11">coroutines</a> (a form of collaborative multithreading, similar to
+        one-shot continuations) enable long or computationally expensive tasks to be effortlessly split over several game ticks, rather than executing the
+        entire task in one tick (which potentially could cause the game to lag).</li>
+        <li><b>Power:</b> Lua is a very powerful language due to concepts like metatables and first-class functions. At the same time, Lua is minimal in
+        structure, which leaves you free to decide how to implement various schemes.</li>
+      </ul>
+    </p>
+    <h2>1.2 - <a name="intro-setup">Installation and setup</a></h2>
+    <p>
+      A copy of the Windows version of DEFCON (either the full game, or the <a href="http://www.introversion.co.uk/defcon/downloads/index.html">free demo</a>)
+      is required, along with a method of running it (typically Windows itself, or an emulation layer like <a href="http://appdb.winehq.org/objectManager.php?sClass=application&iId=3948">WINE</a>).
+      Next, the game executable and additional data files from <a href="http://www.introversion.co.uk/defcon/bots/files/">DEFCON AI API</a> need to be downloaded,
+      and should replace their counterparts in the DEFCON installation - the sample bot and C++ API itself in this package are not required in order to use
+      Luabot, but you may want them anyway - the documentation in this package may be useful as well. Finally, the luabot folder of the <a href="http://www.corsix.org/defcon_luabot/version-0.3.zip">Luabot download archive</a>
+      should be extracted so that it becomes <code>Defcon\AI\luabot</code>.
+    </p>
+    <h1>2 - <a name="binding">The Luabot binding</a></h1>
+    <p>
+      Luabot contains a Lua 5.1 interpreter with all standard libraries loaded (base, <code>coroutine</code>, <code>string</code>, <code>table</code>,
+      <code>math</code>, <code>io</code>, <code>os</code> and <code>debug</code>). In addition, the DEFCON AI API is bound in as well. This binding of the API
+      to Lua is the subject of the remainder of this document.
+    </p>
+    <h2>2.1 - <a name="script-expectations">Expectations of the script</a></h2>
+    <p>
+      The Luabot DLL expects the file <code>AI\luabot\main.lua</code> to be present, and this file is loaded and executed when Luabot is selected as the external
+      AI to use in the DEFCON game lobby. This file is free to include more files using standard Lua facilities like <code>dofile</code> and <code>require</code>,
+      although it should be noted that filenames will be interpreted as relative to the DEFCON game executable, so <code>"AI\luabot\"</code> should be prefixed to
+      file names, or <code>"AI\luabot\?.lua;"</code> should be prefixed to <code>package.path</code>. The name of the file which the Luabot DLL loads can be
+      changed from the default to something else by specifing a <code>luabot</code> command line parameter when launching DEFCON, for example, the command line
+      <code>luabot="AI\my bot\bot.lua"</code> will cause <code>AI\my bot\bot.lua</code> to be loaded instead of <code>AI\luabot\main.lua</code>. Note that if
+      the DLL is renamed to something other than <code>luabot.dll</code>, then the default filename and command line option will change accordingly. For
+      example, if renamed to <code>mybot.dll</code>, then the expected file will be <code>AI\mybot\main.lua</code>, and the command line <code>mybot="AI\other\bot.lua"</code>
+      will cause <code>AI\other\bot.lua</code> to be loaded instead.
+    </p>
+    <p>
+      The script must provide, at a minimum, four global functions: <code><a href="#fn-OnInit">OnInit</a></code>, <code><a href="#fn-OnTick">OnTick</a></code>,
+      <code><a href="#fn-OnEvent">OnEvent</a></code> and <code><a href="#fn-OnShutdown">OnShutdown</a></code>. These functions will be called by DEFCON during
+      the course of the game. There is only ever one AI bot per Lua state, so your script doesn't have to be reentrant or handle simulating multiple bots at once.
+    </p>
+    <h2>2.2 - <a name="ids">IDs</a></h2>
+    <p>
+      The DEFCON AI API defines a number of ID types: <code>allianceID</code>, <code>eventID</code>, <code>fleetID</code>, <code>teamID</code>, <code>unitID</code>,
+      et al. In Luabot, all ID types are light userdata (and all light userdatum are IDs, hence if <code>type(x) == "userdata"</code> then <code>x</code> is
+      an ID). Furthermore, a metatable is set for all light userdata with a <code>__index</code> and <code>__tostring</code> metamethods. The <code>__index</code>
+      metamethod just does a lookup in the globals table, which allows for method-like calls to be made on ID values. The <code>__tostring</code> metamethod
+      causes <code>tostring(someID)</code> to generate <code>"&lt;n&gt;"</code>, where <code>n</code> is some decimal number. Note that as all IDs are all light
+      userdata, no type checking is performed between different classes of IDs. Also, <em>all</em> globals functions are accessible via the method call notation
+      on an ID.
+    </p>
+    <h2>2.3 - <a name="enum">Enumerations</a></h2>
+    <p>
+      The DEFCON AI API defines a number of enumerations (some of which are confusing refered to in the documentation as IDs, like territoryID). Most of these
+      have become string constants, with the exception of unit stats, which are numeric constants.
+    </p>
+    <h3>2.3.1 - <a name="enum-type">Unit type</a></h3>
+    <p>
+      The following string constants are expected by all type name parameters, and are returned by all functions which return a type name:
+      <ul>
+        <li><code>"AirBase"</code></li>
+        <li><code>"BattleShip"</code></li>
+        <li><code>"Bomber"</code></li>
+        <li><code>"Carrier"</code></li>
+        <li><code>"City"</code></li>
+        <li><code>"Explosion"</code></li>
+        <li><code>"Fighter"</code></li>
+        <li><code>"Fleet"</code></li>
+        <li><code>"Gunshot"</code></li>
+        <li><code>"Invalid"</code></li>
+        <li><code>"Nuke"</code></li>
+        <li><code>"RadarStation"</code></li>
+        <li><code>"Saucer"</code></li>
+        <li><code>"Silo"</code></li>
+        <li><code>"Sub"</code></li>
+        <li><code>"Tornado"</code></li>
+        <li><code>"QueueItem"</code></li>
+      </ul>
+    </p>
+    <h3>2.3.2 - <a name="enum-state">Unit state</a></h3>
+    <p>
+      Unit states are numeric constants between <code>0</code> and <code>2</code>, the meaning of which is dependant upon the type of the unit:
+    </p>
+    <table>
+      <tr> <th>Unit type</th> <th>State <code>0</code></th> <th>State <code>1</code></th> <th>State <code>2</code></th> </tr>
+      <tr> <td>AirBase</td> <td>Fighter launch</td> <td>Bomer launch</td> <td>n/a</td> </tr>
+      <tr> <td>BattleShip</td> <td>Attack</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Bomber</td> <td>Attack</td> <td>Nuke</td> <td>In queue</td> </tr>
+      <tr> <td>Carrier</td> <td>Fighter launch</td> <td>Bomer launch</td> <td>Anti-sub</td> </tr>
+      <tr> <td>City</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Explosion</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Fighter</td> <td>Attack</td> <td>n/a</td> <td>In queue</td> </tr>
+      <tr> <td>Fleet</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Gunshot</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Invalid</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Nuke</td> <td>On target</td> <td>Disarm</td> <td>n/a</td> </tr>
+      <tr> <td>RadarStation</td> <td>Active</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Saucer</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>Silo</td> <td>Nuke</td> <td>Air Defence</td> <td>n/a</td> </tr>
+      <tr> <td>Sub</td> <td>Passive sonar</td> <td>Active sonar</td> <td>Nuke</td> </tr>
+      <tr> <td>Tornado</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+      <tr> <td>QueueItem</td> <td>Default</td> <td>n/a</td> <td>n/a</td> </tr>
+    </table>
+    <h3>2.3.3 - <a name="enum-territory">Territories</a></h3>
+    <p>
+      Functions like <a href="#fn-GetTeamTerritories"><code>GetTeamTerritories</code></a> and <a href="#fn-GetTerritoryName"><code>GetTerritoryName</code></a>
+      will return strings from the following list (or in the former case, an array containing one or more of these):
+    </p>
+    <ul>
+      <li><code>"Africa"</code></li>
+      <li><code>"Europe"</code></li>
+      <li><code>"NorthAmerica"</code></li>
+      <li><code>"Russia"</code></li>
+      <li><code>"SouthAmerica"</code></li>
+      <li><code>"SouthAsia"</code></li>
+    </ul>
+    <h3>2.3.4 - <a name="enum-event">Event type</a></h3>
+    <p>
+      When <a href="#fn-OnEvent"><code>OnEvent</code></a> is called, it will receive one of the following as the event type:
+    </p>
+    <ul>
+      <li><code>"CeasedFire"</code>: A team ceased fire to another team.</li>
+      <li><code>"Destroyed"</code>: An object has been destroyed.</li>
+      <li><code>"Hit"</code>: An object has been hit by a gunshot (ie. from a battleship, fighter etc).</li>
+      <li><code>"NewVote"</code>: A new vote has been started</li>
+      <li><code>"NukeLaunchSilo"</code>: A missile has been launched from a silo at given coordinates.</li>
+      <li><code>"NukeLaunchSub"</code>: A missile has been launched from a sub at given coordinates.</li>
+      <li><code>"PingCarrier"</code>: A sonar ping from a carrier has been detected (gives object id).</li>
+      <li><code>"PingDetection"</code>: An object has been detected by a ping event (reveals type and coordinates).</li>
+      <li><code>"PingSub"</code>: A sonar ping from a submarine has been detected (only reveals coordinates).</li>
+      <li><code>"SharedRadar"</code>: A team shared its radar with another team.</li>
+      <li><code>"TeamRetractedVote"</code>: ?</li>
+      <li><code>"TeamVoted"</code>: ?</li>
+      <li><code>"UnceasedFire"</code>: A cease fire agreement has been ended.</li>      
+      <li><code>"UnsharedRadar"</code>: A team stopped sharing its radar with another team.</li>
+      <li><code>"VoteFinishedNo"</code>: A vote finished with no result/change.</li>
+      <li><code>"VoteFinishedYes"</code>: A vote finished, and its contents were accepted.</li>
+    </ul>
+    <h2>2.4 - <a name="api-differences">Differences to the DEFCON C++ API</a></h2>
+    <p>
+      Apart from the obvious differences like IDs being light userdata rather than integers, and some enumerations being string constants rather than
+      integer constants, there are some more subtle differences, some of which are outlined below.
+    </p>
+    <p>
+      Some functions have been renamed for clarity, for example, <code>GetDefcon</code> has become <a href="#fn-GetDefconLevel"><code>GetDefconLevel</code></a>
+      and <code>GetTerritoryId</code> has become <a href="#fn-GetTerritoryName"><code>GetTerritoryName</code></a>. Some other functions have been renamed for
+      consistency, for example, <code>GetFleets</code> has become <a href="#fn-GetTeamFleets"><code>GetTeamFleets</code></a> to be in line with functions like
+      <a href="#fn-GetTeamUnits"><code>GetTeamUnits</code></a>. In some cases, the multiple behaviours of a function have been exported as multiple functions,
+      for example, <a href="#fn-IsValidTerritory"><code>IsValidTerritory</code></a> has become, in addition to itself, <a href="#fn-IsLand"><code>IsLand</code></a>
+      and <a href="#fn-IsSea"><code>IsSea</code></a>. Note that no functions have been removed, although the official function list document does reference
+      some functions (e.g. <code>DebugMoveCamera</code> and <code>GetShots</code>) which do not actually exist in the bot API, and hence cannot be
+      exposed to Lua.
+    </p>
+    <p>
+      In some cases the argument order of a function has changed for consistency, for example <a href="#fn-PlaceStructure"><code>PlaceStructure</code></a> now
+      has the same argument order as <a href="#fn-PlaceFleet"><code>PlaceFleet</code></a> and <a href="#fn-IsValidPlacementLocation"><code>IsValidPlacementLocation</code></a>.
+      In other cases, extra optional arguments have been added, like with <a href="#fn-GetAllUnitData"><code>GetAllUnitData</code></a>. For functions which
+      returned a longitude and latitude value in a <code>std::vector&lt;float&gt;</code>, they now return two values rather than array with two elements, for
+      example <a href="#fn-GetVelocity"><code>GetVelocity</code></a>.
+    </p>
+    <h1>3 - <a name="cpp">Comments on the C++ part of Luabot</a></h1>
+    <p>
+      The actual implementation of Luabot is comprised of several C++ source and header files. A few of these are copied verbatim from the C++ sample bot, and
+      such will not be explained here. Worth mentioning is that Luabot.dll statically links with Lua rather than dynamically linking through a DLL. This is done
+      to reduce the number of DLLs required and improve speed slightly.
+    </p>
+    <h2>3.1 - <a name="cpp-dllinterface">DLLinterface.cpp</a></h2>
+    <p>
+      This file provides implementations of the 4 functions which a bot DLL must provide: <code>AI_init</code>, <code>AI_run</code>, <code>AI_addevent</code>
+      and <code>AI_shutdown</code>. It is worth noting that <code>AI_init</code> leaves on the stack alot of strings for <code>AI_run</code> and
+      <code>AI_addevent</code> to use. This means that neither of these functions have to push any strings onto the Lua stack, which saves a bit of time by
+      causing Lua to not do string hashing and string table lookup when these functions are called.
+    </p>
+    <h2>3.2 - <a name="cpp-luabot">LuaBot.cpp</a></h2>
+    <p>
+      This file contains all the C functions to be called from Lua (apart from those implemented using common templates), along with helper functions to check
+      argument types, push arguments, report errors from <code>lua_pcall</code>, etc. Similarly to <code>DLLinterface.cpp</code>, it is worth noting that all
+      C functions registered by this file share a common environment table which is used to quickly convert between C++ integer constants and Lua string constants.
+      Storing them in upvalues would cause excessive memory bloat, and they cannot be stored on the stack, hence the use of a table. The one exception is
+      <code>lbot_get_all_unit_data</code>, which has the names of the fields it sets in upvalues, again to prevent string rehashing every time it is called.
+    </p>
+    <h2>3.3 - <a name="cpp-templates">BindingTemplates.h</a></h2>
+    <p>
+      This file does require some explanation. Given that alot of the DEFCON AI API functions follow a similar format in terms of arguments and return values,
+      it would be wasteful to write a C function by hand for binding each of these to Lua. Instead, a number of template functions are exposed, each of which
+      takes a C++ API function as a template argument, and then wraps that function to become a Lua C function. They are: <code>thunk_GetSimpleValue</code>,
+      <code>thunk_GetValueFromID</code>, <code>thunk_RequestUsingID</code>, <code>thunk_GetValueDualID</code>, <code>thunk_GetValueLngLat</code> and
+      <code>thunk_GetMapDistance</code>. These all take their arguments off the Lua stack, call their API function (note that while <code>g_pDefconInterface</code>
+      isn't defined when these functions are, it is defined when they are instaniated, so things are fine) and use <code>thunk&lt;T&gt;::push</code> to push their
+      result(s) onto the stack. <code>thunk&lt;T&gt;::push(L, val)</code> takes a Lua state and the value to push, and then returns the number of values pushed
+      (which is normally 1, except in the case of <code>thunk&lt;Vector2&lt;T&gt;&gt;::push</code>, which pushes a longitude and a latitude). This function is
+      defined as a static member of a template class to allow for partial template specialisations like the aforementioned <code>Vector2</code> (this comes at
+      the cost of automatic template parameter deduction, but this isn't required). The template traits classes <code>RValTraits&lt;T&gt;</code> and
+      <code>PValTraits&lt;T&gt;</code> are used to map types to their API return types and <code>thunk&lt;T&gt;::push</code> argument types. For example, when
+      <code>std::vector&lt;void*&gt;</code> is specified as the type, it means that the function from the API actually returns <code>std::vector&lt;int&gt;</code>,
+      and that <code>thunk&lt;T&gt;::push</code> takes <code>const std::vector&lt;int&gt;&amp;</code>. Finally, the classes <code>EnvEnum&lt;I&gt;</code> and
+      <code>Vector2&lt;T&gt;</code> are used as names to identify particular behaviours for pushing results onto the stack.
+    </p>
+    <h1>4 - <a name="fn">Function listing</a></h1>
+    <p>
+      A Lua script has access to all of the global functions detailed below, in addition to the standard Lua libraries:
+    </p>
+    <hr/>
+    <h3><a name="fn-DebugIsReplayingGame"><code>DebugIsReplayingGame ()</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the game is in debug mode and the game is currently being replayed (due to the timeline being clicked), <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-DebugLog"><code>DebugLog (message [, unitID [, tags [, red [, green [, blue [, alpha]]]]]])</code></a></h3>
+    <p>
+      Prints <code>message</code> to the debug log (requires the game be in debug mode) in the colour specified by <code>red</code>, <code>green</code>, <code>
+      blue</code> and <code>alpha</code> - all of which default to <code>255</code> if not given, which results in white. <code>unitID</code> is an optional
+      unit to associate with the message, and <code>tags</code> is a string of tags to assist in clarifying the log message.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetActionQueue"><code>GetActionQueue (unitID)<br/>unitID:GetActionQueue ()</code></a></h3>
+    <p>
+      Returns an array of unitIDs of currently queued actions for the given <code>unitID</code>, for example nukes in a silo or planes on a carrier.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetAllianceID"><code>GetAllianceID (teamID)<br/>teamID:GetAllianceID ()</code></a></h3>
+    <p>
+      Returns the allianceID of the given <code>teamID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetAllOwnUnits"><code>GetAllOwnUnits ()</code></a></h3>
+    <p>
+      Returns an array containing the unitIDs of all units belonging to the current player.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetAllTeamIDs"><code>GetAllTeamIDs ()</code></a></h3>
+    <p>
+      Returns an array containing all of the teamIDs in the current game.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetAllUnitData"><code>GetAllUnitData ([table])</code></a></h3>
+    <p>
+      Returns a table containing data about all visible units. If <code>table</code> is passed, then that table is reused rather than creating a new table. In
+      the returned table, the keys are unitIDs and the values are tables with the following fields:
+    </p>
+    <ul>
+      <li><b>time:</b> The current game time (as given by <a href="#fn-GetGameTime"><code>GetGameTime</code></a>).</li>
+      <li><b>type:</b> The type of the unit (see <a href="#enum-type">§2.3.1</a>).</li>
+      <li><b>team:</b> The teamID of the unit's owner.</li>
+      <li><b>state:</b> The current state of the unit (see <a href="#enum-state">§2.3.2</a>).</li>
+      <li><b>visible:</b> In full information mode, <b>true</b> iff the unit would be visible in limited information mode and <b>false</b> otherwise. In
+        information mode, this is always <b>true</b> as inforamtion is only returned about visible units.</li>
+      <li><b>longitude:</b> The current longitude of the unit.</li>
+      <li><b>latitude:</b> The current latitude of the unit.</li>
+    </ul>
+    <p>
+      The <code>time</code> field is useful when in limited information mode; <code>GetAllUnitData</code> does not erase the contents of the given <code>table
+      </code> (if it is given), meaning that if the same table is passed repeatadly, <code>time</code> becomes the game time at which that unit was last seen.
+    </p>
+    <p>
+      Note that cities are not counted as units for the purposes of this function, even though they have a ID, team, longitude, latitude. Use
+      <a href="#fn-GetCityIDs"><code>GetCityIDs</code></a> to get the IDs of cities.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetAllUnits"><code>GetAllUnits ()</code></a></h3>
+    <p>
+      Returns an array containing the unitIDs of all visible units.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetBomberNukeTarget"><code>GetBomberNukeTarget (unitID)<br/>unitID:GetBomberNukeTarget ()</code></a></h3>
+    <p>
+      Returns the target longitude and latitude of the nuke being carried by the given <code>unitID</code> (which should be a bomber).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCityIDs"><code>GetCityIDs ()</code></a></h3>
+    <p>
+      Returns an array containing the cityID of every city in the game. The number of cities does not change during the game, nor do their IDs.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCommandLineArguments"><code>GetCommandLineArguments ([field])</code></a></h3>
+    <p>
+      If called without arguments, returns a table containing all of the command line arguments passed when the DEFCON executable was launched. For example, if 
+      launched with the command line <code>host nowlan limitedinformation luabot="AI\luabot\bot\main.lua" numplayers=1 numplayers=2</code>, would return a table
+      similar to the following:
+    </p>
+    <p>
+    <code>
+    {<br/>
+    &nbsp;&nbsp;[1] = {"C:\\Program Files\\Defcon\\defcon.exe", ""},<br/>
+    &nbsp;&nbsp;[2] = {"host", ""},<br/>
+    &nbsp;&nbsp;[3] = {"nowlan", ""},<br/>
+    &nbsp;&nbsp;[4] = {"limitedinformation", ""},<br/>
+    &nbsp;&nbsp;[5] = {"luabot", "AI\\luabot\\bot\\main.lua"},<br/>
+    &nbsp;&nbsp;[6] = {"numplayers", "1"},<br/>
+    &nbsp;&nbsp;[7] = {"numplayers", "2"},<br/><br/>
+    &nbsp;&nbsp;host = "",<br/>
+    &nbsp;&nbsp;limitedinformation = "",<br/>
+    &nbsp;&nbsp;["C:\\Program Files\\Defcon\\defcon.exe"] = "",<br/>
+    &nbsp;&nbsp;nowlan = "",<br/>
+    &nbsp;&nbsp;numplayers = "2",<br/>
+    &nbsp;&nbsp;luabot = "AI\\luabot\\bot\\main.lua",<br/>
+    }
+    </code>
+    </p>
+    <p>
+      If called with an argument, then it returns the of <code>field</code> in the table. Note that while some <em>game</em> options can have their
+      <em>default</em> values set on the command line, <a href="#fn-GetOptionValue"><code>GetOptionValue</code></a> should be used to get the actual value of
+      a game option.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCityPopulation"><code>GetCityPopulation (cityID)<br/>cityID:GetCityPopulation ()</code></a></h3>
+    <p>
+      Returns the population of the given <code>cityID</code>, which will typically start as a several million and will never go below zero.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCollateralDamage"><code>GetCollateralDamage (teamID)<br/>teamID:GetCollateralDamage ()</code></a></h3>
+    <p>
+      Returns the sum of all collateral damage deaths (deaths to own population) of the given <code>teamID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCurrentState"><code>GetCurrentState (unitID)<br/>unitID:GetCurrentState ()</code></a></h3>
+    <p>
+      Returns the current state of the given <code>unitID</code> (see <a href="#enum-state">§2.3.2</a>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetCurrentTargetID"><code>GetCurrentTargetID (unitID)<br/>unitID:GetCurrentTargetID ()</code></a></h3>
+    <p>
+      Returns the unitID of the current target of the given <code>unitID</code>, or <b>nil</b> if there is no such target.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetDefconLevel"><code>GetDefconLevel ()</code></a></h3>
+    <p>
+      Returns the current Defcon level; the game starts at <code>5</code> and gradually works down to <code>1</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetDesiredGameSpeed"><code>GetDesiredGameSpeed (teamID)<br/>teamID:GetDesiredGameSpeed ()</code></a></h3>
+    <p>
+      Returns the speed at which the given <code>teamID</code> has requested the game be run at (<code>0</code>, <code>1</code>, <code>5</code>, <code>10</code> or <code>20</code>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetDistance"><code>GetDistance (longitude1, latitude1, longitude2, latitude2)</code></a></h3>
+    <p>
+      Returns the ingame distance between the two given points (<code>longitude1</code>, <code>latitude1</code>) and (<code>longitude2</code>, <code>latitude2</code>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetEnemyKills"><code>GetEnemyKills (teamID)<br/>teamID:GetEnemyKills ()</code></a></h3>
+    <p>
+      Returns the sum of the enemy kills of the given <code>teamID</code> (as used for scoring purposes).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetFleetID"><code>GetFleetID (unitID)<br/>unitID:GetFleetID ()</code></a></h3>
+    <p>
+      Returns the fleetID of the given <code>unitID</code>, or <b>nil</b> if it isn't part of a fleet (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetFleetUnits"><code>GetFleetUnits (fleetID)<br/>fleetID:GetFleetUnits ()</code></a></h3>
+    <p>
+      Returns an array containing the unitIDs of every ship in the given <code>fleetID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetFleetMemberOffset"><code>GetFleetMemberOffset (fleetSize, memberIndex)</code></a></h3>
+    <p>
+      For a hypothetical fleet with <code>fleetSize</code> ships in it, returns the offset of the <code>memberIndex</code>th member of that fleet from the centre
+      of the fleet (as longitude and latitude values). <code>memberIndex</code> should be in range [1, <code>fleetSize</code>].
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetFriendlyDeaths"><code>GetFriendlyDeaths (teamID)<br/>teamID:GetFriendlyDeaths ()</code></a></h3>
+    <p>
+      Returns the sum of the friendly deaths (deaths in the population of allies) caused by the given <code>teamID</code> (use <a href="#fn-GetCollateralDamage">
+      <code>GetCollateralDamage</code></a> to get the deaths in own population).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetGameSpeed"><code>GetGameSpeed ()</code></a></h3>
+    <p>
+      Returns the current speed-up factor of the game over real time (<code>0</code>, <code>1</code>, <code>5</code>, <code>10</code> or <code>20</code>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetGameTick"><code>GetGameTick ()</code></a></h3>
+    <p>
+      Returns the number of update cycles (ticks) passed since the game started. There are nominally 10 ticks per real second (regardless of the current game
+      speed).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetGameTime"><code>GetGameTime ()</code></a></h3>
+    <p>
+      Returns the current game time, measured in game seconds. Each tick, the game progress by <code>0.1 * <a href="#fn-GetGameSpeed">GetGameSpeed()</a></code>
+      seconds.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetLatitude"><code>GetLatitude (someID)<br/>cityID:GetLatitude ()<br/>eventID:GetLatitude ()<br/>unitID:GetLatitude ()</code></a></h3>
+    <p>
+      Returns the current latitude of the given <code>cityID</code>, <code>eventID</code> or <code>unitID</code>. The return value is undefined (?) if it is not visible.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetLongitude"><code>GetLongitude (someID)<br/>cityID:GetLongitude ()<br/>eventID:GetLongitude ()<br/>unitID:GetLongitude ()</code></a></h3>
+    <p>
+      Returns the current longitude of the given code>cityID</code>, <code>eventID</code> or <code>unitID</code>. The return value is undefined (?) if it is not visible.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetMovementTargetLocation"><code>GetMovementTargetLocation (unitID)<br/>unitID:GetMovementTargetLocation ()</code></a></h3>
+    <p>
+      Returns as longitude and latitude, the current target location of the given <code>unitID</code>, or <code>0, 0</code> if there is no target location set.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetNukeCount"><code>GetNukeCount (unitID)<br/>unitID:GetNukeCount ()</code></a></h3>
+    <p>
+      Returns the current number of nukes still available to the given <code>unitID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetOptionValue"><code>GetOptionValue (optionname)</code></a></h3>
+    <p>
+      Returns the integer value of the given game option. Suitable values for <code>optionname</code> are:
+    </p>
+    <ul>
+      <li><b><code>"DebugMode"</code>:</b> <code>1</code> iff the game is in debug mode, <code>0</code> otherwise.</li>
+      <li><b><code>"FullInformation"</code>:</b> <code>1</code> iff full information is enabled, <code>0</code> otherwise.</li>
+      <li><b><code>"ServerName"</code>:</b> (How can a name become an integer value?)</li>
+      <li><b><code>"AdvertiseOnInternet"</code>:</b> <code>1</code> iff the game will be advertised on the DEFCON server, <code>0</code> otherwise.</li>
+      <li><b><code>"AdvertiseOnLAN"</code>:</b> <code>1</code> iff the game will be advertised on the local network, <code>0</code> otherwise.</li>
+      <li><b><code>"GameMode"</code>:</b> <code>0</code>: Default, <code>1</code>: Office Mode, <code>2</code>: Speed DEFCON, <code>3</code>: Diplomacy,
+        <code>4</code>: BigWorld, <code>5</code>: Tournament, <code>6</code>: Custom.</li>
+      <li><b><code>"MaxTeams"</code>:</b> The maximum number of participating players (between 1 and 6, 3 is the default).</li>
+      <li><b><code>"TerritoriesPerTeam"</code>:</b> The number of territories assigned to each team (between 1 and 6, 1 is the default).</li>
+      <li><b><code>"CitiesPerTerritory"</code>:</b> The number of cities placed in each territory (between 1 and 50, 25 is the default).</li>
+      <li><b><code>"PopulationPerTerritory"</code>:</b> The total population, in millions, of all cities in a territory (between 10 and 200, 100 is the default).</li>
+      <li><b><code>"CityPopulations"</code>:</b> <code>0</code>: Default, <code>1</code>: Equalised, <code>2</code>: Random, <code>3</code>: Totally Random.</li>
+      <li><b><code>"RandomTerritories"</code>:</b> <code>1</code> iff territory selection is random, <code>0</code> if players can choose.</li>
+      <li><b><code>"PermitDefection"</code>:</b> <code>1</code> iff players can defect from alliances, <code>0</code> otherwise.</li>
+      <li><b><code>"RadarSharing"</code>:</b> <code>0</code>: Always Off, <code>1</code>: Alliance, <code>2</code>: Selective, <code>3</code>: Always On.</li>
+      <li><b><code>"GameSpeed"</code>:</b> <code>0</code>: Slowest Requested, <code>1</code>: 1x, <code>2</code>: 5x, <code>3</code>: 10x, <code>4</code>: 20x.</li>
+      <li><b><code>"SlowestSpeed"</code>:</b> <code>0</code>: Paused, <code>1</code>: 1x, <code>2</code>: 5x, <code>3</code>: 10x, <code>4</code>: 20x.</li>
+      <li><b><code>"ScoreMode"</code>:</b> <code>0</code>: Default, <code>1</code>: Survivor, <code>2</code>: Genocide.</li>
+      <li><b><code>"VictoryTrigger"</code>:</b> Percent of remaining nukes before victory timer starts (between 0 and 100, 20 is the default).</li>
+      <li><b><code>"VictoryTimer"</code>:</b> Duration of victory timer, in minutes (between 0 and 600, 45 is the default).</li>
+      <li><b><code>"VariableUnitCounts"</code>:</b> <code>1</code> iff units are placed using credits (see <a href="#fn-GetTypeCreditCost"><code>GetTypeCreditCost</code></a>
+        and <a href="#fn-GetUnitCreditsRemaining"><code>GetUnitCreditsRemaining</code></a>), <code>0</code> iff units are placed using normal unit caps (see
+        <a href="#fn-GetRemainingUnits"><code>GetRemainingUnits</code></a>).</li>
+      <li><b><code>"WorldScale"</code>:</b> Scale of the world map, in percent (between 50 and 200, 100 is the default).</li>
+      <li><b><code>"MaxSpectators"</code>:</b> Maximum number of spectators in the game (between 0 and 100, 3 is the default).</li>
+      <li><b><code>"SpectatorChatChannel"</code>:</b> <code>1</code> iff the spectator chat channel is public, <code>0</code> iff it is private.</li>
+      <li><b><code>"TeamSwitching"</code>:</b> <code>1</code> iff teams can be switched during the game, <code>0</code> otherwise.</li>
+      <li><b><code>"ServerPassword"</code>:</b> (How can a name become an integer value?)</li>
+    </ul>
+    <p></p><hr/>
+    <h3><a name="fn-GetOwnFleets"><code>GetOwnFleets ()</code></a></h3>
+    <p>
+      Returns an array containing the fleetIDs of all fleets belonging to the current player.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetOwnTeamID"><code>GetOwnTeamID ()</code></a></h3>
+    <p>
+      Returns the teamID of the current player. This value doesn't change during the course of a game (?) so you can call this once and cache the result.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetOwnUnits"><code>GetOwnUnits ()</code></a></h3>
+    <p>
+      Returns an array containing the unitIDs of all units belonging to the current player.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetRange"><code>GetRange (unitID)<br/>unitID:GetRange ()</code></a></h3>
+    <p>
+      Returns the remaining range of the given <code>unitID</code>, or <code>-1</code> if it has unlimited range.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetRemainingPopulation"><code>GetRemainingPopulation (teamID)<br/>teamID:GetRemainingPopulation ()</code></a></h3>
+    <p>
+      Returns the remaining population of the given <code>teamID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetRemainingUnits"><code>GetRemainingUnits (typename)</code></a></h3>
+    <p>
+      Returns the number of units of the given type (see <a href="#enum-type">§2.3.1</a>) which are still remaining to be placed.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetSailDistance"><code>GetSailDistance (longitude1, latitude1, longitude2, latitude2)</code></a></h3>
+    <p>
+      Returns the ingame distance between the two given points (<code>longitude1</code>, <code>latitude1</code>) and (<code>longitude2</code>, <code>latitude2</code>)
+      via a sea route (this performs a pathfinding operation).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetStateCount"><code>GetStateCount (unitID, state)<br/>unitID:GetStateCount (state)</code></a></h3>
+    <p>
+      Returns the remaining (?) number of activations in the <code>state</code> (see <a href="#enum-state">§2.3.2</a>) for the given <code>unitID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetStateTimer"><code>GetStateTimer (unitID)<br/>unitID:GetStateTimer ()</code></a></h3>
+    <p>
+      Returns the time (in seconds?) until the current sate of the given <code>unitID</code> is active.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetSuccessfulCommands"><code>GetSuccessfulCommands ()</code></a></h3>
+    <p>
+      Returns an array of commandIDs which were executed in the previous tick (however, nothing can be done with a commandID?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTeamFleets"><code>GetTeamFleets (teamID)<br/>teamID:GetTeamFleets ()</code></a></h3>
+    <p>
+      Returns an array of fleetIDs owned by the given <code>teamID</code>. Only fleetIDs with at least one member visible are returned.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTeamID"><code>GetTeamID (someID)<br/>cityID:GetTeamID ()<br/>unitID:GetTeamID ()</code></a></h3>
+    <p>
+      Returns the teamID of the owner of the given <code>cityID</code> or <code>unitID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTeamName"><code>GetTeamName (teamID)<br/>teamID:GetTeamName ()</code></a></h3>
+    <p>
+      Returns the name of the given <code>teamID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTeamTerritories"><code>GetTeamTerritories (teamID)<br/>teamID:GetTeamTerritories ()</code></a></h3>
+    <p>
+      Returns an array containing the names of the territories assigned to the given <code>teamID</code> (see <a href="#enum-territory">§2.3.3</a>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTeamUnits"><code>GetTeamUnits (teamID)<br/>teamID:GetTeamUnits ()</code></a></h3>
+    <p>
+      Returns an array of unitIDs owned by the given <code>teamID</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTerritoryName"><code>GetTerritoryName (longitude, latitude)</code></a></h3>
+    <p>
+      Returns the name of the territory (see <a href="#enum-territory">§2.3.3</a>) at the given location.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetTypeCreditCost"><code>GetTypeCreditCost (typename)</code></a></h3>
+    <p>
+      Returns the cost, in credits, of the give unit type (see <a href="#enum-type">§2.3.1</a>). This is only useful in variable unit mode.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetUnitCreditsRemaining"><code>GetUnitCreditsRemaining ()</code></a></h3>
+    <p>
+      Returns the number of credits remaining for placing units. This is only useful in variable unit mode.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetUnitType"><code>GetUnitType (someID)<br/>cityID:GetUnitType ()<br/>unitID:GetUnitType ()</code></a></h3>
+    <p>
+      Returns the type (see <a href="#enum-type">§2.3.1</a>) of the given <code>cityID</code> or <code>unitID</code> (in the former case, the return value is always
+      <code>"City"</code>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetVelocity"><code>GetVelocity (unitID)<br/>unitID:GetVelocity ()</code></a></h3>
+    <p>
+      Returns the current velocity (as longitude and latitude) of the given <code>unitID</code>. Note that this vector has length proportional to the game speed (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-GetVictoryTimer"><code>GetVictoryTimer ()</code></a></h3>
+    <p>
+      If the victory timer has been started (test with <a href="#fn-IsVictoryTimerActive"><code>IsVictoryTimerActive</code></a>), then returns the time remaining
+      in the game, in seconds (?). If the timer has not yet been started, then the return value is undefined.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsBorder"><code>IsBorder (longitude, latitude)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given location is on a border (see <code>data\earth\coastlines.bmp</code>), <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsCeaseFire"><code>IsCeaseFire (teamID, teamIDother)<br/>teamID:IsCeaseFire (teamIDother)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff <code>teamID</code> is in a cease-fire with <code>teamIDother</code>, <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsLand"><code>IsLand (longitude, latitude)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given location is land, <b>false</b> otherwise. Note that some locations may be neither land nor sea.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsRetaliating"><code>IsRetaliating (unitID)<br/>unitID:IsRetaliating ()</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given <code>unitID</code> is automatically retaliating to an earlier attack, <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsSea"><code>IsSea (longitude, latitude)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given location is sea, <b>false</b> otherwise. Note that some locations may be neither land nor sea.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsSharingRadar"><code>IsSharingRadar (teamID, teamIDother)<br/>teamID:IsSharingRadar (teamIDother)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff <code>teamID</code> is sharing their radar with <code>teamIDother</code>, <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsValidPlacementLocation"><code>IsValidPlacementLocation (longitude, latitude, typename)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given location is a valid placement location for a <code>typename</code> unit (see <a href="#enum-type">§2.3.1</a>). Note that
+      this only tests the terrain at the location, it does not check that the player still has at least one <code>typename</code> unit to place, nor does it
+      check that units can be placed in the current Defcon level (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsValidTerritory"><code>IsValidTerritory (teamID, longitude, latitude, isSeaArea)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given location belongs to the given <code>teamID</code> and either <code>isSeaArea</code> is <b>true</b> and the location is
+      sea, or <code>isSeaArea</code> is <b>false</b> and the location is land. Otherwise, if either of these tests fails, <b>false</b> is returned. Note that
+      some locations may be neither land nor sea.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsVictoryTimerActive"><code>IsVictoryTimerActive ()</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the victory timer countdown is active, <b>false</b> otherwise.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-IsVisible"><code>IsVisible (unitID, teamID)<br/>unitID:IsVisible (teamID)</code></a></h3>
+    <p>
+      Returns <b>true</b> iff the given <code>unitID</code> is visible by the given <code>teamID</code>, <b>false</b> otherwise. In limited information mode,
+      the return value is undefined when <code>teamID ~= <a href="#fn-GetOwnTeamID">GetOwnTeamID()</a></code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-OnEvent"><code>OnEvent (eventtype, sourceID, targetID, unittype, longitude, latitude)</code></a></h3>
+    <p>
+      This function must be provided by the bot script. It is called whenever an event happens in the game. See <a href="#enum-event">§2.3.4</a> for possible
+      event types, and <a href="#enum-type">§2.3.1</a> for unit type values.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-OnInit"><code>OnInit ()</code></a></h3>
+    <p>
+      This function must be provided by the bot script. It is called when the bot is selected from the dropdown list in the game lobby. Technically, all code
+      placed in the global scope is executed when this happens, but placing initialisation code inside a function results in neater code.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-OnShutdown"><code>OnShutdown ()</code></a></h3>
+    <p>
+      This function must be provided by the bot script. It is called just before the Lua state is destroyed and the Lua bot unloaded.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-OnTick"><code>OnTick ()</code></a></h3>
+    <p>
+      This function must be provided by the bot script. It is called once per update cycle of the game server (which is nominally every 100ms).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-PlaceFleet"><code>PlaceFleet (longitude, latitude, type1 [, type2 [, type3 [, type4 [, type5 [, type6]]]]])</code></a></h3>
+    <p>
+      Tries to place a fleet of upto six units at the given location. <code>type1</code> through <code>type6</code> should be (if provided) <code>"Sub"</code>,
+      <code>"BattleShip"</code> or <code>"Carrier"</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-PlaceStructure"><code>PlaceStructure (longitude, latitude, typename)</code></a></h3>
+    <p>
+      Tries to place a structure of type <code>typename</code> (see <a href="#enum-type">§2.3.1</a>) at the given location.
+      <a href="#fn-IsValidPlacementLocation"><code>IsValidPlacementLocation</code></a> can be used to test if the location is valid.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-RequestAlliance"><code>RequestAlliance (allianceID)<br/>allianceID:RequestAlliance ()</code></a></h3>
+    <p>
+      Sends out requests to all members of the given <code>allianceID</code> to join the alliance. Use <a href="#fn-OnEvent"><code>OnEvent</code></a> to
+      listen for the reply.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-RequestCeaseFire"><code>RequestCeaseFire (teamID)<br/>teamID:RequestCeaseFire ()</code></a></h3>
+    <p>
+      Sends a request for a cease-fire to the given <code>teamID</code>. Use <a href="#fn-OnEvent"><code>OnEvent</code></a> to listen for the reply.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-RequestGameSpeed"><code>RequestGameSpeed (speed)</code></a></h3>
+    <p>
+      Notifies the game that <code>speed</code> should be the speed that the game happens at. Depending on the game mode, the actual speed may be the lowest
+      speed of all requested speeds, it may be locked to a certain speed, or it may be a combination of both. <code>speed</code> should be <code>0</code>,
+      <code>1</code>, <code>5</code>, <code>10</code> or <code>20</code>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-RequestShareRadar"><code>RequestShareRadar (teamID)<br/>teamID:RequestShareRadar ()</code></a></h3>
+    <p>
+      Sends a request for radar sharing to the given <code>teamID</code>. Use <a href="#fn-OnEvent"><code>OnEvent</code></a> to listen for the reply.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SendChat"><code>SendChat (message [, channel [, raw]])</code></a></h3>
+    <p>
+      Sends the given <code>message</code> as chat to all players in the given <code>channel</code>, which should be <code>"public"</code>, <code>"alliance"</code>,
+      or <code>"spectators"</code> (defaults to <code>"public"</code> if not given). If <code>raw</code> is <b>true</b>, then <code>message</code> is sent as-is.
+      Otherwise, tabs are converted to single spaces (as tabs cannot appear in chat messages) and if there are any line breaks in <code>message</code>, then each
+      line is sent as a seperate message.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SendVote"><code>SendVote (eventID , infavour)<br/>eventID:SendVote (infavour)</code></a></h3>
+    <p>
+      Votes either <code>infavour</code> or not to the given <code>eventID</code>. As votes happen, the <code>eventID</code> can be listened for using
+      <a href="#fn-OnEvent"><code>OnEvent</code></a>.
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SetActionTarget"><code>SetActionTarget (unitID [, targetID [, longitude, latitude]])<br/>unitID:SetActionTarget ([targetID [, longitude, latitude]])</code></a></h3>
+    <p>
+      Sets the target of the action for the given <code>unitID</code>. Either <code>targetID</code> should be given, or it should be <b>nil</b> and a location
+      given (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SetLandingTarget"><code>SetLandingTarget (unitID, targetID)<br/>unitID:SetLandingTarget (targetID)</code></a></h3>
+    <p>
+      Instructs the given <code>unitID</code> to land at the given <code>targetID</code> (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SetMovementTarget"><code>SetMovementTarget (unitID, longitude, latitude)<br/>unitID:SetMovementTarget (longitude, latitude)</code></a></h3>
+    <p>
+      Instructs the given <code>unitID</code> to move to the given location (?). This is usually called for ships, as setting an action target would cause them
+      to use a weapon rather than move (?).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-SetState"><code>SetState (unitID, state)<br/>unitID:SetState (state)</code></a></h3>
+    <p>
+      Instructs the given <code>unitID</code> to change to the given <code>state</code> (see <a href="#enum-state">§2.3.2</a>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-WhiteboardDraw"><code>WhiteboardDraw (longitude1, latitude1, longitude2, latitude2)</code></a></h3>
+    <p>
+      Draws a line segment on the whiteboard between (<code>longitude1</code>, <code>latitude1</code>) and (<code>longitude2</code>, <code>latitude2</code>).
+    </p>
+    <p></p><hr/>
+    <h3><a name="fn-WhiteboardClear"><code>WhiteboardClear ()</code></a></h3>
+    <p>
+      Clears all lines from the whiteboard.
+    </p>
+    <p></p><hr/>
+  </body>
+</html>
