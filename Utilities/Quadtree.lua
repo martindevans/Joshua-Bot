@@ -1,4 +1,4 @@
-require "Utilities/Enumeration"
+require "Utilities/Query"
 
 Quadtree = {}
 

@@ -19,7 +19,7 @@ Joshua = {}
 Joshua.new = function()
 	local t = {}
 
-	t.Quadtree = Quadtree.new(10, 10, 60, 60)
+	t.Quadtree = Quadtree.new(0, -90, 360, 90)
 
 	t.cities = {}
 	t.cities.allied = {}
@@ -41,19 +41,19 @@ Joshua.new = function()
 		SendChat("Defcon 5")
 		RequestGameSpeed(1)
 
-		t.Quadtree.Root.Subdivide()
-		t.Quadtree.Root.TopLeft.Subdivide()
-		t.Quadtree.Root.TopLeft.TopRight.Subdivide()
-		t.Quadtree.Draw(Whiteboard.DrawLine)
+  		t.Quadtree.Root.Subdivide()
+  		t.Quadtree.Root.TopLeft.Subdivide()
+  		t.Quadtree.Root.TopLeft.TopRight.Subdivide()
+ 		t.Quadtree.Draw(Whiteboard.DrawLine)
 
---~ 		for _, v in pairs(GetAllTeamIDs()) do
---~ 			t.ShotTrackers[v] = TeamShotTracker.new()
---~ 		end
+ 		for _, v in pairs(GetAllTeamIDs()) do
+			t.ShotTrackers[v] = TeamShotTracker.new()
+		end
 
---~ 		SurveyCities(t)
---~ 		Deployment.DeployAirbases(t)
+		SurveyCities(t)
+		Deployment.DeployAirbases(t)
 
---~ 		Deployment.FetchUnits(t.buildings.airbases, "AirBase", AirBase.new)
+		Deployment.FetchUnits(t.buildings.airbases, "AirBase", AirBase.new)
 	end
 
 	t.OnFirstTickDefcon4 = function()
