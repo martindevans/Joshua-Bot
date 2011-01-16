@@ -1,4 +1,4 @@
-require "Utilities/Query"
+require "Utilities/Enumeration"
 
 Quadtree = {}
 
@@ -72,16 +72,12 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 	end
 
 	t.Enumerate = function()
-		return Enumeration.Create(function(yield)
+		return Enumeration.CreateFromGenerator(function(yield)
 			yield(t)
 
 			local enumerate = function(iter)
-				while true do
-					val = iter()
-					if (val == nil) then
-						break
-					end
-					yield(val)
+				while not iter.IsComplete() do
+					yield(iter())
 				end
 			end
 
@@ -113,15 +109,10 @@ Quadtree.new = function(minX, minY, maxX, maxY)
 	t.Root = root
 
 	t.Enumerate = function()
-		return Enumeration.Create(function(yield)
-			local iter = root.Enumerate()
-			while true do
-				local value = iter()
-				if (value ~= nil) then
-					yield(value)
-				else
-					break
-				end
+		return Enumeration.CreateFromGenerator(function(yield)
+			local enumerator = root.Enumerate()
+			while enumerator.MoveNext() do
+				yield(enumerator.Current())
 			end
 		end)
 	end
@@ -174,7 +165,8 @@ local function TestSubdivide()
 	end
 
 	local iter = qTree.Enumerate()
-	if iter() ~= qTree.Root then
+	iter.MoveNext()
+	if iter.Current() ~= qTree.Root then
 		return "BAR"
 	end
 
