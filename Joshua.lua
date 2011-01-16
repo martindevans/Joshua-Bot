@@ -19,9 +19,10 @@ Joshua = {}
 Joshua.new = function()
 	local t = {}
 
-	t.Quadtree = Quadtree.new(0, -90, 360, 90)
+	t.Quadtree = Quadtree.new(-180, -90, 180, 90)
 
 	t.cities = {}
+	t.cities.all = {}
 	t.cities.allied = {}
 	t.cities.enemy = {}
 
@@ -41,23 +42,16 @@ Joshua.new = function()
 		SendChat("Defcon 5")
 		RequestGameSpeed(1)
 
-		SurveyCities(t)
+		SurveyCities.ScanWorld(t)
 		
-		Multithreading.StartLongTask(function()			
-			t.Quadtree.Root.Subdivide()
-			t.Quadtree.Root.TopLeft.Subdivide()
-			t.Quadtree.Root.TopRight.Subdivide()
-			t.Quadtree.Root.BottomLeft.Subdivide()
-			t.Quadtree.Root.BottomRight.Subdivide()
-			t.Quadtree.Root.BottomRight.TopLeft.Subdivide()
-			t.Quadtree.Root.BottomRight.TopRight.Subdivide()
-			t.Quadtree.Root.BottomRight.BottomLeft.Subdivide()
-			t.Quadtree.Root.BottomRight.BottomRight.Subdivide()
-			
+		Multithreading.StartLongTask(function()
+			Whiteboard.clear()
+		
 			t.Quadtree.Draw(
 				function(a, b, c, d)
 					Multithreading.StartLongTask(function()
 						Whiteboard.DrawLine(a, b, c, d)
+						Multithreading.YieldLongTask()
 					end)
 				end)
 		end)

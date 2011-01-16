@@ -65,6 +65,16 @@ Enumeration.CreateFromGenerator = function(generator)
 		return counter
 	end
 	
+	t.ToList = function(iterationCallback)
+		local l = {}
+		while t.MoveNext() do
+			table.insert(l, t.Current())
+			if iterationCallback ~= nil then
+				iterationCallback()
+			end
+		end
+	end
+	
 	return t
 end
 
@@ -77,16 +87,20 @@ Enumeration.CreateFromTable = function(tableT)
 end
 
 local function TestQuery()
+	local createEnumerator = function()
+		return Enumeration.CreateFromGenerator(function(yield)
+			yield(1)
+			yield(2)
+			yield(3)
+			yield(4)
+		end)
+	end
+
 	local isEven = function(a)
 		return math.mod(a, 2) == 0
 	end
 	
-	local enumerator = Enumeration.CreateFromGenerator(function(yield)
-		yield(1)
-		yield(2)
-		yield(3)
-		yield(4)
-	end)
+	local enumerator = createEnumerator()
 	
 	local increment = function(a)
 		return a + 1
@@ -104,17 +118,18 @@ local function TestQuery()
 		return isEven(a)
 	end
 	
-	local enumerator = Enumeration.CreateFromGenerator(function(yield)
-		yield(1)
-		yield(2)
-		yield(3)
-		yield(4)
-	end)
+	local enumerator = createEnumerator()
 	
 	for k in enumerator.Where(evenFilter) do
 		if not isEven(k) then
 			error("Filter failed")
 		end
+	end
+	
+	local enumerator = createEnumerator()
+	
+	if (enumerator.Count() ~= 4) then
+		error("Incorrect count")
 	end
 end
 

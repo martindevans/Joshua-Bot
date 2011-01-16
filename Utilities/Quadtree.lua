@@ -38,22 +38,47 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 		return isLeaf
 	end
 
-	t.DrawNode = function(DrawBox, DrawNumber)
-		if isLeaf then
-			DrawBox(minX, minY, maxX, maxY)
-			if DrawNumber then
-				DrawNumber(t.Depth(), minX, minY, 5, 5)
+	t.DrawNode = function(DrawBox, predicate)
+		if predicate == nil or predicate(t) then
+			if isLeaf then
+				DrawBox(minX, minY, maxX, maxY)
+			else
+				t.TopLeft.DrawNode(DrawBox, predicate)
+				t.TopRight.DrawNode(DrawBox, predicate)
+				t.BottomLeft.DrawNode(DrawBox, predicate)
+				t.BottomRight.DrawNode(DrawBox, predicate)
 			end
+		end
+	end
+	
+	t.ContainsPoint = function(x, y)
+		return x <= maxX and x > minX and y <= maxY and y > minY
+	end
+	
+	t.FindLeafNode = function(x, y)
+		if (isLeaf) then
+			if t.ContainsPoint(x, y) then
+				return t
+			else
+				return nil
+			end
+		end
+		
+		if (t.BottomLeft.ContainsPoint(x, y)) then
+			return t.BottomLeft.FindLeafNode(x, y)
+		elseif (t.BottomRight.ContainsPoint(x, y)) then
+			return t.BottomRight.FindLeafNode(x, y)
+		elseif (t.TopLeft.ContainsPoint(x, y)) then
+			return t.TopLeft.FindLeafNode(x, y)
+		elseif (t.TopRight.ContainsPoint(x, y)) then
+			return t.TopRight.FindLeafNode(x, y)
 		else
-			t.TopLeft.DrawNode(DrawBox)
-			t.TopRight.DrawNode(DrawBox)
-			t.BottomLeft.DrawNode(DrawBox)
-			t.BottomRight.DrawNode(DrawBox)
+			return nil
 		end
 	end
 	
 	t.Subdivide = function(condition)
-		if isLeaf and not condition or (condition(t)) then
+		if isLeaf and (not condition or condition(t)) then
 			local midX = minX + (maxX - minX) / 2
 			local midY = minY + (maxY - minY) / 2
 			t.BottomLeft = CreateNode(t, minX, minY, midX, midY)
@@ -141,7 +166,7 @@ Quadtree.new = function(minX, minY, maxX, maxY)
 		end)
 	end
 
-	t.Draw = function(DrawLine)
+	t.Draw = function(DrawLine, predicate)
 		local drawbox = function(minX, minY, maxX, maxY)
 			DrawLine(minX, minY, maxX, minY)
 			DrawLine(maxX, minY, maxX, maxY)
@@ -149,7 +174,7 @@ Quadtree.new = function(minX, minY, maxX, maxY)
 			DrawLine(minX, maxY, minX, minY)
 		end
 
-		root.DrawNode(drawbox)
+		root.DrawNode(drawbox, predicate)
 	end
 
 	return t

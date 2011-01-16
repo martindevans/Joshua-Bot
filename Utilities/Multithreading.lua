@@ -23,9 +23,11 @@ Multithreading.StartLongTask = function(f)
 end
 
 Multithreading.WorkOnLongTasks = function(allotted)
-	allottedTime = allotted or 0.0002
+	allottedTime = allotted or 0.0001
 	
-	while (allottedTime > 0) do
+	local count = 5
+	while (allottedTime > 0 and count > 0) do	
+		count = count - 1
 		task = taskQueue.peek()
 		if (task ~= nil) then
 			if (coroutine.status(task) == "dead") then
