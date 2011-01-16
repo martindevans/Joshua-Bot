@@ -57,6 +57,14 @@ Enumeration.CreateFromGenerator = function(generator)
 		end)
 	end
 	
+	t.Count = function()
+		local counter = 0
+		while t.MoveNext() do
+			counter = counter + 1
+		end
+		return counter
+	end
+	
 	return t
 end
 

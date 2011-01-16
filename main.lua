@@ -3,6 +3,7 @@ package.path = debug.getinfo(1, "S").source:match[[^@?(.*[\/])[^\/]-$]] .."?.lua
 
 -- Load up required files
 require "Whiteboard"
+require "Utilities/Enumeration"
 require "Utilities/Multithreading"
 require "Utilities/Set"
 

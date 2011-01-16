@@ -41,22 +41,37 @@ Joshua.new = function()
 		SendChat("Defcon 5")
 		RequestGameSpeed(1)
 
-  		t.Quadtree.Root.Subdivide()
-  		t.Quadtree.Root.TopLeft.Subdivide()
-  		t.Quadtree.Root.TopLeft.TopRight.Subdivide()
- 		t.Quadtree.Draw(Whiteboard.DrawLine)
+		SurveyCities(t)
+		
+		Multithreading.StartLongTask(function()			
+			t.Quadtree.Root.Subdivide()
+			t.Quadtree.Root.TopLeft.Subdivide()
+			t.Quadtree.Root.TopRight.Subdivide()
+			t.Quadtree.Root.BottomLeft.Subdivide()
+			t.Quadtree.Root.BottomRight.Subdivide()
+			t.Quadtree.Root.BottomRight.TopLeft.Subdivide()
+			t.Quadtree.Root.BottomRight.TopRight.Subdivide()
+			t.Quadtree.Root.BottomRight.BottomLeft.Subdivide()
+			t.Quadtree.Root.BottomRight.BottomRight.Subdivide()
+			
+			t.Quadtree.Draw(
+				function(a, b, c, d)
+					Multithreading.StartLongTask(function()
+						Whiteboard.DrawLine(a, b, c, d)
+					end)
+				end)
+		end)
 
  		for _, v in pairs(GetAllTeamIDs()) do
 			t.ShotTrackers[v] = TeamShotTracker.new()
 		end
-
-		SurveyCities(t)
-		Deployment.DeployAirbases(t)
-
-		Deployment.FetchUnits(t.buildings.airbases, "AirBase", AirBase.new)
 	end
 
 	t.OnFirstTickDefcon4 = function()
+		Deployment.DeployAirbases(t)
+
+		Deployment.FetchUnits(t.buildings.airbases, "AirBase", AirBase.new)
+	
 		SendChat("Defcon 4")
 	end
 
@@ -66,9 +81,27 @@ Joshua.new = function()
 		Multithreading.StartLongTask(function()
 			for _, v in pairs(t.buildings.airbases) do
 				SendChat("Launching a fighter")
+				
 				v.launchFighter(v.longitude, v.latitude + 10)
+				Multithreading.YieldLongTask()
+				v.launchFighter(v.longitude + 10, v.latitude)
+				Multithreading.YieldLongTask()
+				v.launchFighter(v.longitude, v.latitude - 10)
+				Multithreading.YieldLongTask()
+				v.launchFighter(v.longitude - 10, v.latitude)
+				Multithreading.YieldLongTask()
+				
 				Whiteboard.DrawCross(v.longitude, v.latitude + 10, 1)
 				WhiteboardDraw(v.longitude, v.latitude, v.longitude, v.latitude + 10)
+				Multithreading.YieldLongTask()
+				Whiteboard.DrawCross(v.longitude, v.latitude - 10, 1)
+				WhiteboardDraw(v.longitude, v.latitude, v.longitude, v.latitude - 10)
+				Multithreading.YieldLongTask()
+				Whiteboard.DrawCross(v.longitude + 10, v.latitude, 1)
+				WhiteboardDraw(v.longitude, v.latitude, v.longitude + 10, v.latitude)
+				Multithreading.YieldLongTask()
+				Whiteboard.DrawCross(v.longitude - 10, v.latitude, 1)
+				WhiteboardDraw(v.longitude, v.latitude, v.longitude - 10, v.latitude)
 				Multithreading.YieldLongTask()
 			end
 		end)

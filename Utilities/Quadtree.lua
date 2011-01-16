@@ -25,14 +25,25 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 		return parent == nil
 	end
 
+	local depth = 0
+	if parent ~= nil then
+		depth = parent.Depth() + 1
+	end
+	t.Depth = function()
+		return depth
+	end
+	
 	local isLeaf = true
 	t.IsLeaf = function()
 		return isLeaf
 	end
 
-	t.DrawNode = function(DrawBox)
+	t.DrawNode = function(DrawBox, DrawNumber)
 		if isLeaf then
 			DrawBox(minX, minY, maxX, maxY)
+			if DrawNumber then
+				DrawNumber(t.Depth(), minX, minY, 5, 5)
+			end
 		else
 			t.TopLeft.DrawNode(DrawBox)
 			t.TopRight.DrawNode(DrawBox)
@@ -40,22 +51,35 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 			t.BottomRight.DrawNode(DrawBox)
 		end
 	end
+	
+	t.Subdivide = function(condition)
+		if isLeaf and not condition or (condition(t)) then
+			local midX = minX + (maxX - minX) / 2
+			local midY = minY + (maxY - minY) / 2
+			t.BottomLeft = CreateNode(t, minX, minY, midX, midY)
+			t.BottomRight = CreateNode(t, midX, minY, maxX, midY)
+			t.TopLeft = CreateNode(t, minX, midY, midX, maxY)
+			t.TopRight = CreateNode(t, midX, midY, maxX, maxY)
 
-	t.Subdivide = function()
-		if not isLeaf then
-			return false
+			isLeaf = false
+
+			if condition ~= nil then
+				if (condition(t.BottomLeft)) then
+					t.BottomLeft.Subdivide(condition)
+				end
+				if (condition(t.BottomRight)) then
+					t.BottomRight.Subdivide(condition)
+				end
+				if (condition(t.TopLeft)) then
+					t.TopLeft.Subdivide(condition)
+				end
+				if (condition(t.TopRight)) then
+					t.TopRight.Subdivide(condition)
+				end
+			end
+			return true
 		end
-
-		local midX = minX + (maxX - minX) / 2
-		local midY = minY + (maxY - minY) / 2
-		t.BottomLeft = CreateNode(t, minX, minY, midX, midY)
-		t.BottomRight = CreateNode(t, midX, minY, maxX, midY)
-		t.TopLeft = CreateNode(t, minX, midY, midX, maxY)
-		t.TopRight = CreateNode(t, midX, midY, maxX, maxY)
-
-		isLeaf = false
-
-		return true
+		return false
 	end
 
 	t.Merge = function()
@@ -76,8 +100,8 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 			yield(t)
 
 			local enumerate = function(iter)
-				while not iter.IsComplete() do
-					yield(iter())
+				while iter.MoveNext() do
+					yield(iter.Current())
 				end
 			end
 

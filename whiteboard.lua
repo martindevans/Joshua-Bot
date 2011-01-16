@@ -25,6 +25,44 @@ Whiteboard.drawCircle = function (x, y, radius)
 	end)
 end
 
+Whiteboard.DrawNumber = function(number, x, y, width, height)
+	if number == 0 then
+		Whiteboard.DrawLine(x, y, x + width, y)
+		Whiteboard.DrawLine(x + width, y, x + width, y + height * 2)
+		Whiteboard.DrawLine(x, y + height, x + size, y + height)
+		Whiteboard.DrawLine(x, y, x, y + height)
+	elseif number == 1 then
+		Whiteboard.DrawLine(x, y + height / 2, x + width / 2, y)
+		Whiteboard.DrawLine(x + width / 2, y, x + width / 2, y + height)
+		Whiteboard.DrawLine(x, y + height, x + width, y + height)
+	elseif number == 2 then
+		Whiteboard.DrawLine(x, y, x + width, y)
+		Whiteboard.DrawLine(x + width, y, x + width, y + height / 2)
+		Whiteboard.DrawLine(x, y + height / 2, x + width, y + height / 2)
+		Whiteboard.DrawLine(x, y, x, y + height / 2)
+		Whiteboard.DrawLine(x, y + height, x + width, y + height)
+	elseif number == 3 then
+		Whiteboard.DrawLine(x, y, x + width, y)
+		Whiteboard.DrawLine(x, y + height / 2, x + width, y + height / 2)
+		Whiteboard.DrawLine(x, y + height, x + width, y + height)
+		Whiteboard.DrawLine(x + width, y, x + width, y + height)
+	elseif number == 4 then
+		Whiteboard.DrawLine(x, y, x, y + height / 2)
+		Whiteboard.DrawLine(x, y + height / 2, x + width, y + height / 2)
+		Whiteboard.DrawLine(x + width, y, x + width, y + height)
+	elseif number == 5 then
+	
+	elseif number == 6 then
+	
+	elseif number == 7 then
+	
+	elseif number == 8 then
+	
+	elseif number == 9 then
+	
+	end
+end
+
 Whiteboard.DrawCross = function (long, lat, size)
 	WhiteboardDraw(long - size, lat - size, long + size, lat + size)
 	WhiteboardDraw(long - size, lat + size, long + size, lat - size)

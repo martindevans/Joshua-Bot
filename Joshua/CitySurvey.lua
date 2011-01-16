@@ -10,6 +10,7 @@ function SurveyCities(Joshua)
 			local us = GetOwnTeamID()
 			for i, city in ipairs(allCities) do
 				local long, lat, pop = city:GetLongitude(), city:GetLatitude(), city:GetCityPopulation()
+				table.insert(Joshua.cities, city)
 				if city:GetTeamID() == us then
 					Whiteboard.DrawSquare(long, lat, pop / 5000000)
 					table.insert(Joshua.cities.allied, city)
