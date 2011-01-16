@@ -1,3 +1,7 @@
+-- Written by Martin
+-- martindevans@gmail.com
+-- http://martindevans.appspot.com/blog
+
 Queue = {}
 
 Queue.new = function()

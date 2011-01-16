@@ -1,3 +1,7 @@
+-- Written by Martin
+-- martindevans@gmail.com
+-- http://martindevans.appspot.com/blog
+
 require "Utilities/Enumeration"
 
 Quadtree = {}
@@ -38,16 +42,22 @@ local function CreateNode(parent, minX, minY, maxX, maxY)
 		return isLeaf
 	end
 
-	t.DrawNode = function(DrawBox, predicate)
-		if predicate == nil or predicate(t) then
-			if isLeaf then
-				DrawBox(minX, minY, maxX, maxY)
-			else
-				t.TopLeft.DrawNode(DrawBox, predicate)
-				t.TopRight.DrawNode(DrawBox, predicate)
-				t.BottomLeft.DrawNode(DrawBox, predicate)
-				t.BottomRight.DrawNode(DrawBox, predicate)
-			end
+	t.DrawNode = function(DrawLine)
+		if t.IsRoot() then
+			DrawLine(minX, minY, maxX, minY)
+			DrawLine(maxX, minY, maxX, maxY)
+			DrawLine(maxX, maxY, minX, maxY)
+			DrawLine(minX, maxY, minX, minY)
+		end
+		
+		if not isLeaf then
+			DrawLine(minX, t.TopLeft.GetMinY(), maxX, t.TopLeft.GetMinY())
+			DrawLine(t.TopLeft.GetMaxX(), minY, t.TopLeft.GetMaxX(), maxY)
+		
+			t.TopLeft.DrawNode(DrawLine)
+			t.TopRight.DrawNode(DrawLine)
+			t.BottomLeft.DrawNode(DrawLine)
+			t.BottomRight.DrawNode(DrawLine)
 		end
 	end
 	
@@ -166,15 +176,8 @@ Quadtree.new = function(minX, minY, maxX, maxY)
 		end)
 	end
 
-	t.Draw = function(DrawLine, predicate)
-		local drawbox = function(minX, minY, maxX, maxY)
-			DrawLine(minX, minY, maxX, minY)
-			DrawLine(maxX, minY, maxX, maxY)
-			DrawLine(maxX, maxY, minX, maxY)
-			DrawLine(minX, maxY, minX, minY)
-		end
-
-		root.DrawNode(drawbox, predicate)
+	t.Draw = function(DrawLine)
+		root.DrawNode(DrawLine)
 	end
 
 	return t

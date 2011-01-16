@@ -13,12 +13,14 @@ require "Joshua/UpdateAllUnits"
 require "Utilities/Quadtree"
 require "whiteboard"
 
--- table acts as a namespace
 Joshua = {}
 
 Joshua.new = function()
 	local t = {}
 
+	t.EnforceRequiredSpeed = false
+	t.RequiredSpeed = 1
+	
 	t.Quadtree = Quadtree.new(-180, -90, 180, 90)
 
 	t.cities = {}
@@ -40,8 +42,10 @@ Joshua.new = function()
 
 	t.OnFirstTickDefcon5 = function()
 		SendChat("Defcon 5")
-		RequestGameSpeed(1)
 
+		t.RequiredSpeed = 1
+		t.EnforceRequiredSpeed = true
+		
 		SurveyCities.ScanWorld(t)
 		
 		Multithreading.StartLongTask(function()
@@ -54,6 +58,8 @@ Joshua.new = function()
 						Multithreading.YieldLongTask()
 					end)
 				end)
+				
+			t.RequiredSpeed = 20
 		end)
 
  		for _, v in pairs(GetAllTeamIDs()) do
@@ -110,7 +116,7 @@ Joshua.new = function()
 	end
 
 	t.TickDefcon5 = function()
-
+		
 	end
 
 	t.TickDefcon4 = function()
@@ -127,6 +133,12 @@ Joshua.new = function()
 
 	t.TickDefcon1 = function()
 
+	end
+	
+	t.Tick = function()
+		if t.EnforceRequiredSpeed then
+			RequestGameSpeed(t.RequiredSpeed)
+		end
 	end
 
 	return t

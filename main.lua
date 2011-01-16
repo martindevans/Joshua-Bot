@@ -37,6 +37,8 @@ function OnTick()
 		end
 	end
 
+	Instance.Tick()
+	
 	if (DefconLevel == 5) then
 		Instance.TickDefcon5()
 	elseif (DefconLevel == 4) then

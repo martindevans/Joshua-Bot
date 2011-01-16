@@ -79,7 +79,7 @@ helpers.GenerateCityBoundingBox = function(JoshuaInstance)
 	maxLongitude = -1000000;
 	
 	for i, city in ipairs(JoshuaInstance.cities.allied) do
-		local long, lat, pop = city:GetLongitude(), city:GetLatitude(), city:GetCityPopulation()
+		local long, lat, pop = city.Longitude, city.Latitude, city.Population
 		
 		if lat < minLatitude then
 			minLatitude = lat
@@ -105,7 +105,7 @@ helpers.CalculatePopulationField = function(JoshuaInstance, longitude, latitude)
 	if (IsValidPlacementLocation (longitude, latitude, "Silo")) then
 		local score = 0
 		for i, city in ipairs(JoshuaInstance.cities.allied) do
-			local long, lat, pop = city:GetLongitude(), city:GetLatitude(), city:GetCityPopulation()
+			local long, lat, pop = city.Longitude, city.Latitude, city.Population
 			score = score + pop / math.pow(math.pow((long - longitude), 2) + math.pow((lat - latitude), 2), 0.5)
 			Multithreading.YieldLongTask()
 		end

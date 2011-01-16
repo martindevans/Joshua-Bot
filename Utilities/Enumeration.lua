@@ -1,3 +1,7 @@
+-- Written by Martin
+-- martindevans@gmail.com
+-- http://martindevans.appspot.com/blog
+
 Enumeration = {}
 
 Enumeration.CreateFromGenerator = function(generator)

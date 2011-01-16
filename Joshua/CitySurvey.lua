@@ -12,7 +12,7 @@ SurveyCities.ScanWorld = function(Joshua)
 		local us = GetOwnTeamID()
 		
 		subdivide = function(node)
-			if (node.CityCount > 1 and node.Depth() < 5) then
+			if (node.CityCount > 1 and node.Depth() < 10) then
 				node.Subdivide()
 				node.TopLeft.Cities = {}
 				node.TopLeft.CityCount = 0
