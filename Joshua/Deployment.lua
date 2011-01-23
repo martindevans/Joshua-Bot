@@ -14,6 +14,31 @@ local helpers = {}
 
 local siloPlacementScoreInfluenceRange = 5
 
+Deployment.DeployRadar = function(JoshuaInstance)
+	Multithreading.StartLongTask(function()
+		SendChat("Starting Deploying RADAR")
+		
+		Whiteboard.clear()
+		local minLatitude, minLongitude, maxLatitude, maxLongitude = helpers.GenerateCityBoundingBox(JoshuaInstance)
+		Whiteboard.clear()
+		Whiteboard.DrawBox(minLongitude, minLatitude, maxLongitude, maxLatitude)
+		
+		SendChat("Generating score set")
+		set = helpers.GenerateScoreSet(JoshuaInstance, minLatitude, minLongitude, maxLatitude, maxLongitude)
+		Whiteboard.clear()
+		SendChat("done")
+		
+		while GetRemainingUnits("RadarStation") > 0 do
+			local maxPoint = set.DeleteMax()
+			local long, lat, score = maxPoint.longitude, maxPoint.latitude, maxPoint.score
+			PlaceStructure(long, lat, "RadarStation")
+			Multithreading.YieldLongTask()
+		end
+		
+		SendChat("RADAR Deployed")
+	end)
+end
+
 Deployment.DeployAirbases = function(JoshuaInstance)
 	Multithreading.StartLongTask(function()
 		SendChat("Starting deploying airbases")
@@ -43,6 +68,8 @@ Deployment.FetchUnits = function(targetTable, unitType, newMethod)
 		for _, id in pairs(allMyUnits) do
 			if (id:GetUnitType() == unitType) then
 				targetTable[id] = newMethod(id)
+			else
+				SendChat(id:GetUnitType())
 			end
 			Multithreading.YieldLongTask()
 		end

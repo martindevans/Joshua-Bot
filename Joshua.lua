@@ -10,6 +10,12 @@ require "Joshua/Location"
 require "Joshua/TeamShotTracker"
 require "Joshua/UpdateAllUnits"
 
+require "Joshua/Defcon5"
+require "Joshua/Defcon4"
+require "Joshua/Defcon3"
+require "Joshua/Defcon2"
+require "Joshua/Defcon1"
+
 require "Utilities/Quadtree"
 require "whiteboard"
 
@@ -37,105 +43,26 @@ Joshua.new = function()
 
 	t.buildings = {}
 	t.buildings.airbases = {}
+	t.buildings.silos = {}
+	t.buildings.radars = {}
 
 	t.ShotTrackers = {}
-
-	t.OnFirstTickDefcon5 = function()
-		SendChat("Defcon 5")
-
-		t.RequiredSpeed = 1
-		t.EnforceRequiredSpeed = true
-		
-		SurveyCities.ScanWorld(t)
-		
-		Multithreading.StartLongTask(function()
-			Whiteboard.clear()
-		
-			t.Quadtree.Draw(
-				function(a, b, c, d)
-					Multithreading.StartLongTask(function()
-						Whiteboard.DrawLine(a, b, c, d)
-						Multithreading.YieldLongTask()
-					end)
-				end)
-				
-			t.RequiredSpeed = 20
-		end)
-
- 		for _, v in pairs(GetAllTeamIDs()) do
-			t.ShotTrackers[v] = TeamShotTracker.new()
-		end
-	end
-
-	t.OnFirstTickDefcon4 = function()
-		Deployment.DeployAirbases(t)
-
-		Deployment.FetchUnits(t.buildings.airbases, "AirBase", AirBase.new)
 	
-		SendChat("Defcon 4")
-	end
+	t.OnFirstTickDefcon5 = function() Defcon5.FirstTick(t) end
+	t.OnFirstTickDefcon4 = function() Defcon4.FirstTick(t) end
+	t.OnFirstTickDefcon3 = function() Defcon3.FirstTick(t) end
+	t.OnFirstTickDefcon2 = function() Defcon2.FirstTick(t) end
+	t.OnFirstTickDefcon1 = function() Defcon1.FirstTick(t) end
 
-	t.OnFirstTickDefcon3 = function()
-		SendChat("Defcon 3")
-
-		Multithreading.StartLongTask(function()
-			for _, v in pairs(t.buildings.airbases) do
-				SendChat("Launching a fighter")
-				
-				v.launchFighter(v.longitude, v.latitude + 10)
-				Multithreading.YieldLongTask()
-				v.launchFighter(v.longitude + 10, v.latitude)
-				Multithreading.YieldLongTask()
-				v.launchFighter(v.longitude, v.latitude - 10)
-				Multithreading.YieldLongTask()
-				v.launchFighter(v.longitude - 10, v.latitude)
-				Multithreading.YieldLongTask()
-				
-				Whiteboard.DrawCross(v.longitude, v.latitude + 10, 1)
-				WhiteboardDraw(v.longitude, v.latitude, v.longitude, v.latitude + 10)
-				Multithreading.YieldLongTask()
-				Whiteboard.DrawCross(v.longitude, v.latitude - 10, 1)
-				WhiteboardDraw(v.longitude, v.latitude, v.longitude, v.latitude - 10)
-				Multithreading.YieldLongTask()
-				Whiteboard.DrawCross(v.longitude + 10, v.latitude, 1)
-				WhiteboardDraw(v.longitude, v.latitude, v.longitude + 10, v.latitude)
-				Multithreading.YieldLongTask()
-				Whiteboard.DrawCross(v.longitude - 10, v.latitude, 1)
-				WhiteboardDraw(v.longitude, v.latitude, v.longitude - 10, v.latitude)
-				Multithreading.YieldLongTask()
-			end
-		end)
-	end
-
-	t.OnFirstTickDefcon2 = function()
-		SendChat("Defcon 2")
-	end
-
-	t.OnFirstTickDefcon1 = function()
-		SendChat("Defcon 1")
-	end
-
-	t.TickDefcon5 = function()
-		
-	end
-
-	t.TickDefcon4 = function()
-
-	end
-
-	t.TickDefcon3 = function()
-		UpdateAllUnits.Update(Instance)
-	end
-
-	t.TickDefcon2 = function()
-
-	end
-
-	t.TickDefcon1 = function()
-
-	end
+	t.TickDefcon5 = function() Defcon5.Tick(t) end
+	t.TickDefcon4 = function() Defcon4.Tick(t) end
+	t.TickDefcon3 = function() Defcon3.Tick(t) end
+	t.TickDefcon2 = function() Defcon2.Tick(t) end
+	t.TickDefcon1 = function() Defcon1.Tick(t) end
 	
 	t.Tick = function()
+		UpdateAllUnits.Update(Instance)
+	
 		if t.EnforceRequiredSpeed then
 			RequestGameSpeed(t.RequiredSpeed)
 		end
