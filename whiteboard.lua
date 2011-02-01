@@ -8,21 +8,19 @@ Whiteboard.clear = function()
 	WhiteboardClear()
 end
 
-Whiteboard.drawCircle = function (x, y, radius)
-	Multithreading.StartLongTask(function(x, y, radius)
-		local segments = 7
-		local theta_step = math.pi * 2 / segments
-		local sin, cos = math.sin(theta_step), math.cos(theta_step)
-		local dx = radius
-		local dy = 0
-		for i = 1, segments do
-			local nx = cos * dx - sin * dy
-			local ny = sin * dx + cos * dy
-		
-			WhiteboardDraw(x + dx, y + dy, x + nx, y + ny)
-			dx, dy = nx, ny
-		end
-	end)
+Whiteboard.drawCircle = function (x, y, radius, segments)
+	local segments = segments or 7
+	local theta_step = math.pi * 2 / segments
+	local sin, cos = math.sin(theta_step), math.cos(theta_step)
+	local dx = radius
+	local dy = 0
+	for i = 1, segments do
+		local nx = cos * dx - sin * dy
+		local ny = sin * dx + cos * dy
+	
+		WhiteboardDraw(x + dx, y + dy, x + nx, y + ny)
+		dx, dy = nx, ny
+	end
 end
 
 Whiteboard.DrawNumber = function(number, x, y, width, height)

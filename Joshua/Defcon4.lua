@@ -3,18 +3,15 @@ Defcon4 = {}
 Defcon4.FirstTick = function(Joshua)
 	--Deployment.DeployAirbases(Joshua)
 	Deployment.DeployRadar(Joshua)
-
-	--Deployment.FetchUnits(Joshua.buildings.airbases, "AirBase", AirBase.new)
-	Deployment.FetchUnits(Joshua.buildings.radars, "RadarStation", function(a) return a end)
 	
 	Multithreading.StartLongTask(function()
-		SendChat("Finding radars")
+		SendChat("Drawing RADAR range circles")
 		local count = 0
-		for _, v in ipairs(Joshua.buildings.radars) do
+		for k, v in ipairs(Joshua.buildings.radars) do
 			count = count + 1
-			lat, long, range = v:GetLongitude(), v:GetLatitude(), v:GetRange()
-			Whiteboard.drawCircle(lat, long, range)
-			SendChat(lat .. " " .. long .. " " .. range)
+			lat, long, range = v:GetLongitude(), v:GetLatitude(), 20 * 1 / (GetOptionValue ("WorldScale") / 100)
+			Whiteboard.drawCircle(lat, long, range, 14)
+			Multithreading.YieldLongTask()
 		end
 		SendChat(count .. " radar dishes")
 	end)

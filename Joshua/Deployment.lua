@@ -35,6 +35,14 @@ Deployment.DeployRadar = function(JoshuaInstance)
 			Multithreading.YieldLongTask()
 		end
 		
+		Multithreading.YieldLongTask(true)
+		Multithreading.YieldLongTask(true)
+		Multithreading.YieldLongTask(true)
+		Multithreading.YieldLongTask(true)
+		Multithreading.YieldLongTask(true)
+		
+		Deployment.FetchUnits(JoshuaInstance.buildings.radars, "RadarStation", function(a) return a end)
+		
 		SendChat("RADAR Deployed")
 	end)
 end
@@ -63,17 +71,19 @@ Deployment.DeployAirbases = function(JoshuaInstance)
 end
 
 Deployment.FetchUnits = function(targetTable, unitType, newMethod)
-	Multithreading.StartLongTask(function()
-		local allMyUnits = GetOwnUnits()
-		for _, id in pairs(allMyUnits) do
-			if (id:GetUnitType() == unitType) then
-				targetTable[id] = newMethod(id)
-			else
-				SendChat(id:GetUnitType())
-			end
-			Multithreading.YieldLongTask()
+	SendChat("Fetch " .. unitType)
+	local allMyUnits = GetOwnUnits()
+	local count = 0
+	for index, id in pairs(allMyUnits) do
+		if (id:GetUnitType() == unitType) then
+			targetTable[count] = newMethod(id)
+			count = count + 1
+			SendChat("Found a " .. unitType)
+		else
+			SendChat(id:GetUnitType())
 		end
-	end)
+		Multithreading.YieldLongTask()
+	end
 end
 
 helpers.GenerateScoreSet = function(JoshuaInstance, minLatitude, minLongitude, maxLatitude, maxLongitude)
