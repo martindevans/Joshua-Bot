@@ -84,7 +84,7 @@ end
 
 Enumeration.CreateFromTable = function(tableT)
 	return Enumeration.CreateFromGenerator(function(yield)
-		for k, v in ipairs(tableT) do
+		for k, v in pairs(tableT) do
 			yield({Key = k, Value = v})
 		end
 	end)

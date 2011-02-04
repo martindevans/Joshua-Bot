@@ -7,11 +7,11 @@ Defcon4.FirstTick = function(Joshua)
 	Multithreading.StartLongTask(function()
 		SendChat("Drawing RADAR range circles")
 		local count = 0
-		for k, v in ipairs(Joshua.buildings.radars) do
+		for k, v in pairs(Joshua.buildings.radars) do
 			count = count + 1
 			lat, long, range = v:GetLongitude(), v:GetLatitude(), 20 * 1 / (GetOptionValue ("WorldScale") / 100)
-			Whiteboard.drawCircle(lat, long, range, 14)
-			Multithreading.YieldLongTask()
+			Whiteboard.drawCircle(lat, long, range, 20)
+			Multithreading.YieldLongTask(true)
 		end
 		SendChat(count .. " radar dishes")
 	end)

@@ -28,20 +28,31 @@ Deployment.DeployRadar = function(JoshuaInstance)
 		Whiteboard.clear()
 		SendChat("done")
 		
-		while GetRemainingUnits("RadarStation") > 0 do
+		local available = GetRemainingUnits("RadarStation")
+		local placed = 0
+		while placed < available do
 			local maxPoint = set.DeleteMax()
 			local long, lat, score = maxPoint.longitude, maxPoint.latitude, maxPoint.score
-			PlaceStructure(long, lat, "RadarStation")
-			Multithreading.YieldLongTask()
+			if (IsValidPlacementLocation(long, lat, "RadarStation")) then
+				PlaceStructure(long, lat, "RadarStation")
+				placed = placed + 1
+				Multithreading.YieldLongTask(true)
+				Multithreading.YieldLongTask(true)
+				Multithreading.YieldLongTask(true)
+			else
+				Multithreading.YieldLongTask()
+			end
 		end
 		
-		Multithreading.YieldLongTask(true)
-		Multithreading.YieldLongTask(true)
-		Multithreading.YieldLongTask(true)
-		Multithreading.YieldLongTask(true)
+		SendChat(placed .. " of " .. available .. " available buildings")
+		
 		Multithreading.YieldLongTask(true)
 		
-		Deployment.FetchUnits(JoshuaInstance.buildings.radars, "RadarStation", function(a) return a end)
+		local returned = 0
+		while returned < placed do
+			Multithreading.YieldLongTask(true)
+			returned = Deployment.FetchUnits(JoshuaInstance.buildings.radars, "RadarStation", function(a) return a end)
+		end
 		
 		SendChat("RADAR Deployed")
 	end)
@@ -71,19 +82,17 @@ Deployment.DeployAirbases = function(JoshuaInstance)
 end
 
 Deployment.FetchUnits = function(targetTable, unitType, newMethod)
-	SendChat("Fetch " .. unitType)
 	local allMyUnits = GetOwnUnits()
 	local count = 0
 	for index, id in pairs(allMyUnits) do
 		if (id:GetUnitType() == unitType) then
 			targetTable[count] = newMethod(id)
 			count = count + 1
-			SendChat("Found a " .. unitType)
-		else
-			SendChat(id:GetUnitType())
 		end
 		Multithreading.YieldLongTask()
 	end
+	
+	return count
 end
 
 helpers.GenerateScoreSet = function(JoshuaInstance, minLatitude, minLongitude, maxLatitude, maxLongitude)

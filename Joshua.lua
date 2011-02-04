@@ -2,7 +2,7 @@
 -- martindevans@gmail.com
 -- http://martindevans.appspot.com/blog
 
-require "Joshua/CitySurvey"
+require "Joshua/Survey"
 require "Joshua/AirPatrol"
 require "Joshua/AirBase"
 require "Joshua/Deployment"
@@ -17,6 +17,7 @@ require "Joshua/Defcon2"
 require "Joshua/Defcon1"
 
 require "Utilities/Quadtree"
+require "Utilities/Enumeration"
 require "whiteboard"
 
 Joshua = {}
@@ -24,9 +25,6 @@ Joshua = {}
 Joshua.new = function()
 	local t = {}
 
-	t.EnforceRequiredSpeed = false
-	t.RequiredSpeed = 1
-	
 	t.Quadtree = Quadtree.new(-180, -90, 180, 90)
 
 	t.cities = {}
@@ -63,8 +61,10 @@ Joshua.new = function()
 	t.Tick = function()
 		UpdateAllUnits.Update(Instance)
 	
-		if t.EnforceRequiredSpeed then
-			RequestGameSpeed(t.RequiredSpeed)
+		if Multithreading.TaskCount() > 0 then
+			RequestGameSpeed(1)
+		else
+			RequestGameSpeed(20)
 		end
 	end
 
