@@ -2,6 +2,26 @@
 -- martindevans@gmail.com
 -- http://martindevans.appspot.com/blog
 
+---------------------------------------------------------------------------------------------------------
+-- Implements a minmaxheap
+-- A min/max heap allows efficient removal of both the minimum and maximum value in the heap
+--
+-- local heap = MinMaxHeap.new()
+-- heap.Add(1)
+--     heap.PeekMax() == 1
+--     heap.PeekMin() == 1
+-- heap.AddMany({2,3,4,5})
+--     heap.PeekMax() == 5
+--     heap.PeekMin() == 1
+-- heap.DeleteMax() == 5
+--     heap.PeekMax() == 4
+--
+-- The heap uses the > and < operators
+-- to define custom ordering relations, simple set the "lt" metamethod on your objects before passing them into the heap
+--
+-- Check out the tests at the bottom of this file for more examples
+---------------------------------------------------------------------------------------------------------
+
 MinMaxHeap = {}
 
 local function Swap(heap, indexA, indexB)
