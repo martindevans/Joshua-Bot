@@ -2,6 +2,35 @@
 -- martindevans@gmail.com
 -- http://martindevans.appspot.com/blog
 
+---------------------------------------------------------------------------------------------------------
+-- Enumeration provides enumerations of values
+--
+-- To create an enumerator:
+--    Enumerator.CreateFromGenerator(function)
+--    Simply provide a function which takes an argument (yield), and calls yield(value) for every value it returns
+-- Alternatively:
+--    Enumerator.CreateFromTable(table)
+--    This will return an enumeration of {key, Value} pairs
+-- 
+-- Once you have an enumerator, you can move through it by:
+--    E.MoveNext()
+--        Set Current and Returns true if there is a value in the enumeration, or false if the enumeration has ended
+--    E.Current()
+--        Returns the current value
+--
+-- Enumerations can be powerful queries:
+--    local e = Enumeration.CreateFromTable({1,2,3,4,5,6,7,8,9,10})
+--        e is an enumerator of key value pairs from 1 to 10
+--    local evens = e.Where(function(v) return mod(v, 2))
+--        evens only contains all the values where that function returned true, i.e. all the even numbers
+--    local doubled = evens.Select(function(v) return v * 2)
+--        doubled now contains all the even numbers which we filtered out, doubled in value.
+--
+-- These enumerations are lazy. This means that the above example has at this point not calculated any values.
+-- The values of the enumeration are calculated as they are demanded by MoveNext(). So, the above example will only
+-- calculate a doubled even number when doubled.MoveNext() is called. This means complex queries can be built
+-- very efficiently.
+---------------------------------------------------------------------------------------------------------
 Enumeration = {}
 
 Enumeration.CreateFromGenerator = function(generator)
