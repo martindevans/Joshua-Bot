@@ -6,8 +6,12 @@ require "Whiteboard"
 require "Utilities/Enumeration"
 require "Utilities/Multithreading"
 require "Utilities/Set"
+require "Utilities/Pipes"
+
+require "Joshua/Location"
 
 require "Joshua"
+require "EventManager"
 
 --Variables
 DefconLevel = 6
@@ -55,17 +59,16 @@ function OnTick()
 end
 
 function OnEvent(eventType, sourceID, targetID, unitType, longitude, latitude)
-	if (eventType == "CeasedFire") then
-		--A team ceased fire to another team.
-	elseif (eventType == "Destroyed") then
-		--An object has been destroyed.
-	elseif (eventType == "Hit") then
-		--An object has been hit by a gunshot (ie. from a battleship, fighter etc).
-		local tracker = Instance.ShotTrackers[sourceID:GetTeamID()]
-		tracker.Hit(sourceID, targetID)
-	elseif (eventType == "NewVote") then
-		--A new vote has been started
-	elseif (eventType == "NukeLaunchSilo") then
+	local data = {}
+	data.SourceID = sourceID
+	data.TargetID = targetID
+	data.UnitType = unitType
+	data.Longitue = Location.new(longitude, latitude)
+	data.EventType = eventType
+	
+	Pipes.Send("Event_" .. eventType, data)
+	
+	if (eventType == "NukeLaunchSilo") then
 		--A missile has been launched from a silo at given coordinates.
 	elseif (eventType == "NukeLaunchSub") then
 		--A missile has been launched from a sub at given coordinates.
@@ -75,6 +78,16 @@ function OnEvent(eventType, sourceID, targetID, unitType, longitude, latitude)
 		--An object has been detected by a ping event (reveals type and coordinates).
 	elseif (eventType == "PingSub") then
 		--A sonar ping from a submarine has been detected (only reveals coordinates).
+	elseif (eventType == "Destroyed") then
+		--An object has been destroyed.
+	elseif (eventType == "Hit") then
+		--An object has been hit by a gunshot (ie. from a battleship, fighter etc).
+		
+		
+	elseif (eventType == "CeasedFire") then
+		--A team ceased fire to another team.
+	elseif (eventType == "NewVote") then
+		--A new vote has been started
 	elseif (eventType == "SharedRadar") then
 		--A team shared its radar with another team.
 	elseif (eventType == "TeamRetractedVote") then

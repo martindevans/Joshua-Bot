@@ -19,6 +19,7 @@ require "Joshua/Defcon1"
 require "Utilities/Quadtree"
 require "Utilities/Enumeration"
 require "whiteboard"
+require "EventManager"
 
 Joshua = {}
 
